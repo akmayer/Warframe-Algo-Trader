@@ -22,3 +22,14 @@ def setConfigStatus(key, value):
 pb_token = configData["pushbutton_token"]
 pushbutton_device_iden = configData["pushbutton_device_iden"]
 jwt_token = configData["wfm_jwt_token"]
+
+# Read JSON file
+with open('settings.json') as file:
+    data = json.load(file)
+
+# Extract values and initialize variables
+blacklistedItems = data['blacklistedItems']
+priceShiftThreshold = data['priceShfitThreshold']
+avgPriceCap = data['avgPriceCap']
+volumeThreshold = data['volumeThreshold']
+rangeThreshold = data['rangeThreshold']

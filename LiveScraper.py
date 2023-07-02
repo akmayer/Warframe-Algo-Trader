@@ -19,8 +19,8 @@ try:
 except FileNotFoundError:
     df = pd.read_csv("allItemData.csv")
 
-volFilter = 15
-rangeFilter = 10
+#volFilter = 15
+#rangeFilter = 10
 
 averaged_df = df.drop(["datetime", "item_id"], axis=1)
 averaged_df = averaged_df.groupby(['name', 'order_type']).mean().reset_index()
@@ -42,11 +42,11 @@ inventoryNames = inventory["name"].unique()
 #display(inventory)
 
 #TODO wrap this in a function so that dfFilter and buySellOverlap can be modified based on the inventory in the LiveScraper
-dfFilter = averaged_df[(((averaged_df.get("volume") > volFilter) & (averaged_df.get("range") > rangeFilter)) | (averaged_df.get("name").isin(inventoryNames))) & (averaged_df.get("order_type") == "closed")]
+dfFilter = averaged_df[(((averaged_df.get("volume") > config.volumeThreshold) & (averaged_df.get("range") > config.rangeThreshold)) | (averaged_df.get("name").isin(inventoryNames))) & (averaged_df.get("order_type") == "closed")]
 
 dfFilter = dfFilter.sort_values(by="range", ascending=False)
 dfFilter["weekPriceShift"] = dfFilter.apply(getWeekIncrease, axis=1)
-dfFilter = dfFilter[((dfFilter.get("avg_price") < 400) & (dfFilter.get("weekPriceShift") >= -2)) | (dfFilter.get("name").isin(inventoryNames))]
+dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames))]
     
 names = dfFilter["name"].unique()
 
@@ -126,8 +126,7 @@ def getFilteredDF(item):
 
 
 def ignoreItems(itemName):
-    blacklistedItems = []
-    return itemName in blacklistedItems
+    return itemName in config.blacklistedItems
 
 def compareLiveOrdersToData(item, liveOrderDF, orderType, itemStats, currentOrders, itemID, modRank, inventory):
     myOrdersDF = pd.DataFrame.from_dict(currentOrders[f'{orderType}_orders'])
@@ -164,34 +163,39 @@ def compareLiveOrdersToData(item, liveOrderDF, orderType, itemStats, currentOrde
     numTraders = orderDF.shape[0]
     #if no online buyers/sellers
     logging.debug(f"Week average {closedMetricKey}:\t{itemStats[closedMetricKey]}")
-    if numTraders == 0:
+    if numTraders == 0 and myOrderActive == False:
         #send_push("No buyers active", f"There is no one {orderType}ing {item}. Log in and decide what to do yourself.")
+        postOrder(itemID, orderType, 1, 1, True, modRank)
         logging.debug(f"No {orderType}ers for this item!")
     else:
         bestTrader = orderDF.loc[0]
+
+        #Measures the price gap between the current best trader and the best price that item has ever been posted at in the past week.
+        #Ex. if the best sell price seen on a Primed Continuity over the past week was 70, and the current best trader is selling for 80, this would be 10.
+        #If this Metric is high, a posting should not be made in that category, since it represents an especially good person to contact.
         liveOrderMetric = metricMult * (bestTrader["platinum"] - itemStats[liveMetricKey])
+
+        #Measures the gap between the best reported closed price on an item and the best trader. For example, if the lowest an item was closed at was for
+        #80 platinum and the highest buy order is listed at 60, this would be 20 which represents a good time to overcut that individual.
+        #This metric is probably very easily tricked by market manipulation of people either marking items as being sold for absurdly high or absurdly low.
         closedOrderMetric = metricMult * (itemStats[closedMetricKey] - bestTrader["platinum"])
+
+        #Thie measures the gap between the average closed price and the price of the best trader. For example, if an item goes for 50 plat on average and
+        #the best buyer is buying for 30, it may also be a good time to overcut them.
         closedAvgMetric = metricMult * (itemStats["closedAvg"] - bestTrader["platinum"])
-        #if liveOrderMetric > 0:
-            #logging.debug(f"GOOD {orderType.upper()}ER ACTIVE")
-            #logging.debug(f"{bestTrader['username']}\t{bestTrader['platinum']}")
+
         postPrice = bestTrader['platinum']+metricMult
 
-        '''if closedOrderMetric > 35:
-            postPrice += 10'''
-        
         if orderType == "buy":
-            #if closedOrderMetric > 15:
-            #    postPrice += 4
                 
-            if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedOrderMetric < (6 + 4 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
+            if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (15 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
                 logging.debug("You're holding too many of this item! Not putting up a buy order.")
                 if myOrderActive:
                     logging.debug("In fact you have a buy order up for this item! Deleting it.")
                     deleteOrder(myOrderID)
                 return
             
-            if closedOrderMetric > 6 and closedAvgMetric > 10:
+            if closedAvgMetric > 15:
                 if myOrderActive:
                     if (myPlatPrice != (postPrice)):
                         logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
@@ -249,7 +253,7 @@ try:
 
         #this line below doens't actually do anything since buySellOverlap is already filtered, this should be replaced with
         #a new DFFilter last line so hopefully some functions are made in StatsInterpreter for making DFFilter and buySellOverlap
-        buySellOverlap = buySellOverlap[(buySellOverlap.get("priceShift") >= -2) | (buySellOverlap.index.isin(inventory["name"].unique()))]
+        buySellOverlap = buySellOverlap[(buySellOverlap.get("priceShift") >= config.priceShiftThreshold) | (buySellOverlap.index.isin(inventory["name"].unique()))]
         interestingItems = list(buySellOverlap.index)
 
         currentOrders = getOrders()

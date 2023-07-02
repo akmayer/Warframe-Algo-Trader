@@ -6,6 +6,7 @@ inventory.db
 *.ipynb
 *.ipynb*
 __*__
+tmp.*
 
 # dependencies
 /my-app/node_modules

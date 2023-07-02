@@ -4,7 +4,7 @@ import numpy as np
 import time
 import sys
 
-ignoreLokiPrime = False
+ignoreLokiPrime = True
 
 if ignoreLokiPrime:
     ignoredSet = set(['loki_prime_set'])

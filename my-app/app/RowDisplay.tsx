@@ -42,6 +42,12 @@ export default function RowDisplay() {
     price,
     buttonId
   ) => {
+
+    if (price.trim() === "") {
+      // Do nothing if the price is not entered
+      return;
+    }
+    
     const updatedNumber = number - 1;
     setInProg("IN PROGRESS");
 

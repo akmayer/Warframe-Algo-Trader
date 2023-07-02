@@ -1,0 +1,9 @@
+{
+    "blacklistedItems" : [
+
+    ],
+    "priceShfitThreshold" : -2,
+    "avgPriceCap" : 400,
+    "volumeThreshold" : 15,
+    "rangeThreshold" : 10
+}
