@@ -29,10 +29,11 @@ Warframe blends free-to-play mechanics with a premium currency system that is es
 
 **Steps below are only required for pushbullet mobile notifications:**
 
-6. Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device. 
-7. After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
-8. Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
-9. Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
+6. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
+7. Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device. 
+8. After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
+9. Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
+10. Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
 
 ### Running
 
