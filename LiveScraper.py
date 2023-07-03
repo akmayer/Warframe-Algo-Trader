@@ -211,7 +211,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
             deleteOrder(myOrderID)
         return
     
-    if closedAvgMetric >= 25 or priceRange >= 20:
+    if (closedAvgMetric >= 25 and priceRange >= 10) or priceRange >= 20:
         if myOrderActive:
             if (myPlatPrice != (postPrice)):
                 logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
@@ -244,19 +244,30 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         logging.debug(f"Deleted sell order for {item} since this is not in your inventory.")
         return
     
+    inventory = inventory[inventory["name"] == item]
     liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
 
     #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
+    avgCost = (inventory["purchasePrice"] * inventory["number"]).sum() / inventory["number"].sum()
+    logging.debug(item, avgCost)
     if numSellers == 0:
-        return
+        postPrice = int(avgCost+30)
+        if myOrderActive:
+            updateDBPrice(item, postPrice)
+            updateListing(myOrderID, postPrice, 1, str(visibility))
+            return
+        else:
+            postOrder(itemID, orderType, postPrice, str(1), str(True), modRank)
+            updateDBPrice(item, postPrice)
+            return
     bestSeller = liveSellerDF.iloc[0]
     closedAvgMetric = bestSeller["platinum"] - itemStats["closedAvg"]
     postPrice = bestSeller['platinum'] - 1
     inventory = inventory[inventory.get("name") == item].reset_index()
-    avgCost = (inventory["purchasePrice"] * inventory["number"]).sum() / inventory["number"].sum()
+    
 
     if bestSeller["platinum"] - avgCost <= 0:
-        SelfTexting.sendPush("EMERGENCY", f"The price of {item} is probably dropping and you should sell this to minimize losses asap")
+        SelfTexting.send_push("EMERGENCY", f"The price of {item} is probably dropping and you should sell this to minimize losses asap")
 
     if avgCost + 10 > postPrice and numSellers >= 2:
         postPrice = max([avgCost + 10, liveSellerDF.iloc[1]['platinum']-1])
