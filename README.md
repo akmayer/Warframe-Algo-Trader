@@ -1,6 +1,7 @@
 # Warframe Algorithmic Trading
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/54d095fd-f87f-4d3d-a271-f73a6c95b051)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/24fd1d36-e0ea-41ff-91c0-13d53ab4ebc2)
+
 <img src="https://github.com/akmayer/WarframeMarketAuto/assets/11152158/7267a45f-2350-4461-8feb-4e3daec6a891" height="512">
 
 ## Motivation
