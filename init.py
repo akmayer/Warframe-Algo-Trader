@@ -43,6 +43,7 @@ config_data = {
     "pushbutton_token": "",
     "pushbutton_device_iden": "",
     "wfm_jwt_token": "",
+    "inGameName" : "",
     "runningLiveScraper": False,
     "runningStatisticsScraper": False,
     "runningWarframeScreenDetect": False

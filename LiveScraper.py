@@ -128,6 +128,161 @@ def getFilteredDF(item):
 def ignoreItems(itemName):
     return itemName in config.blacklistedItems
 
+def getMyOrderInformation(item, orderType, currentOrders):
+    myOrdersDF = pd.DataFrame.from_dict(currentOrders[f'{orderType}_orders'])
+    myOrderActive = False
+        #inventory = pd.read_csv("inventory.csv")
+    myOrderID = None
+    visibility = None
+    myPlatPrice = None
+
+    if myOrdersDF.shape[0] != 0:
+        myOrdersDF["url_name"] = myOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
+        myOrdersDF = myOrdersDF[myOrdersDF.get("url_name") == item].reset_index()
+    
+    if myOrdersDF.shape[0] != 0:
+        myOrderID = myOrdersDF.loc[0, "id"]
+        visibility = myOrdersDF.loc[0, "visible"]
+        myPlatPrice = myOrdersDF.loc[0, "platinum"]
+        myOrderActive = True
+    
+    return myOrderID, visibility, myPlatPrice, myOrderActive
+
+
+def getLivePriceRange(liveOrderDF, numBuyers, numSellers):
+    if numBuyers == 0:
+        lowPrice = 0
+    else:
+        lowPrice = liveOrderDF[liveOrderDF.get("order_type") == "sell"]
+
+def restructureLiveOrderDF(liveOrderDF):
+    liveBuyerDF = liveOrderDF[liveOrderDF.get("order_type") == "buy"].sort_values(by="platinum", ascending = False)
+    liveBuyerDF = liveBuyerDF[liveBuyerDF.get("username") != config.inGameName]
+    liveSellerDF = liveOrderDF[liveOrderDF.get("order_type") == "sell"].sort_values(by="platinum", ascending = True)
+    liveSellerDF = liveSellerDF[liveSellerDF.get("username") != config.inGameName]
+
+    numBuyers, numSellers = liveBuyerDF.shape[0], liveSellerDF.shape[0]
+
+    if numBuyers == 0:
+        lowPrice = 0
+    else:
+        lowPrice = liveBuyerDF.iloc[0]["platinum"]
+
+    if numSellers == 0:
+        highPrice = None
+        priceRange = None
+    else:
+        highPrice = liveSellerDF.iloc[0]["platinum"]
+        priceRange = highPrice - lowPrice
+
+    return liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange
+        
+
+
+def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory):
+    orderType = "buy"
+    myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
+    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
+
+    #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
+    if numSellers == 0:
+        return
+    bestSeller = liveSellerDF.iloc[0]
+    if numBuyers == 0 and itemStats["closedAvg"] > 25:
+        postPrice = max([priceRange-40, int(priceRange / 3) - 1])
+        if postPrice < 1:
+            postPrice = 1
+        if myOrderActive:
+            updateListing(myOrderID, postPrice, 1, str(visibility))
+            return
+        else:
+            postOrder(itemID, orderType, postPrice, 1, True, modRank)
+            return
+    elif numBuyers == 0:
+        return
+
+    bestBuyer = liveBuyerDF.iloc[0]
+    closedAvgMetric = itemStats["closedAvg"] - bestBuyer["platinum"]
+    postPrice = bestBuyer["platinum"] + 1
+    if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (15 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
+        logging.debug("You're holding too many of this item! Not putting up a buy order.")
+        if myOrderActive:
+            logging.debug("In fact you have a buy order up for this item! Deleting it.")
+            deleteOrder(myOrderID)
+        return
+    
+    if closedAvgMetric >= 25 or priceRange >= 20:
+        if myOrderActive:
+            if (myPlatPrice != (postPrice)):
+                logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
+                updateListing(myOrderID, str(postPrice), 1, str(visibility))
+                return
+            else:
+                logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
+                return
+        else:
+            postOrder(itemID, orderType, str(postPrice), str(1), True, modRank)
+            logging.debug(f"AUTOMATICALLY POSTED VISIBLE {orderType.upper()} ORDER FOR {postPrice}")
+            return
+    elif myOrderActive:
+        logging.debug(f"Not a good time to have an order up on this item. Deleted {orderType} order for {myPlatPrice}")
+        logging.debug(f"Current highest buyer is:{bestBuyer['platinum']}")
+        deleteOrder(myOrderID)
+        return
+
+
+def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory):
+    orderType = "sell"
+    myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
+
+    if (not (item in inventory["name"].unique())) and (not myOrderActive):
+        logging.debug("You don't have any of this item in inventory to sell.")
+        return
+    elif (not (item in inventory["name"].unique())):
+        updateDBPrice(myOrderID, None)
+        deleteOrder(myOrderID)
+        logging.debug(f"Deleted sell order for {item} since this is not in your inventory.")
+        return
+    
+    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
+
+    #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
+    if numSellers == 0:
+        return
+    bestSeller = liveSellerDF.iloc[0]
+    closedAvgMetric = bestSeller["platinum"] - itemStats["closedAvg"]
+    postPrice = bestSeller['platinum'] - 1
+    inventory = inventory[inventory.get("name") == item].reset_index()
+    avgCost = (inventory["purchasePrice"] * inventory["number"]).sum() / inventory["number"].sum()
+
+    if bestSeller["platinum"] - avgCost <= 0:
+        SelfTexting.sendPush("EMERGENCY", f"The price of {item} is probably dropping and you should sell this to minimize losses asap")
+
+    if avgCost + 10 > postPrice and numSellers >= 2:
+        postPrice = max([avgCost + 10, liveSellerDF.iloc[1]['platinum']-1])
+    else:
+        postPrice = max([avgCost + 10, postPrice])
+        
+    if myOrderActive:
+        if (myPlatPrice != (postPrice)):
+            logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
+            updateDBPrice(item, int(postPrice))
+            updateListing(myOrderID, str(int(postPrice)), 1, str(visibility))
+            return
+        
+        else:
+            updateDBPrice(item, int(myPlatPrice))
+            logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
+            return
+    else:
+        response = postOrder(itemID, orderType, int(postPrice), str(1), str(True), modRank)
+        updateDBPrice(item, int(postPrice))
+        logging.debug(f"AUTOMATICALLY POSTED VISIBLE {orderType.upper()} ORDER FOR {postPrice}")
+        return
+
+    
+
+
 def compareLiveOrdersToData(item, liveOrderDF, orderType, itemStats, currentOrders, itemID, modRank, inventory):
     myOrdersDF = pd.DataFrame.from_dict(currentOrders[f'{orderType}_orders'])
     myOrderActive = False
@@ -158,7 +313,7 @@ def compareLiveOrdersToData(item, liveOrderDF, orderType, itemStats, currentOrde
         closedMetricKey = "closedMax"
     
     orderDF = orderDF.sort_values(by="platinum", ascending = asc).reset_index().drop("index", axis=1)
-    orderDF = orderDF[orderDF.get("username") != "Yelbuzz"].reset_index().drop("index", axis=1)
+    orderDF = orderDF[orderDF.get("username") != config.inGameName].reset_index().drop("index", axis=1)
     #display(orderDF)
     numTraders = orderDF.shape[0]
     #if no online buyers/sellers
@@ -281,11 +436,14 @@ try:
             liveOrderDF = getFilteredDF(item)
             itemID = getItemId(buySellOverlap, item)
             modRank = getItemRank(buySellOverlap, item)
+
+            compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory)
+            compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory)
             
-            compareLiveOrdersToData(item, liveOrderDF, "buy", itemStats, currentOrders, itemID, modRank, inventory)
-            compareLiveOrdersToData(item, liveOrderDF, "sell", itemStats, currentOrders, itemID, modRank, inventory)
+            #compareLiveOrdersToData(item, liveOrderDF, "buy", itemStats, currentOrders, itemID, modRank, inventory)
+            #compareLiveOrdersToData(item, liveOrderDF, "sell", itemStats, currentOrders, itemID, modRank, inventory)
             
-            logging.debug(item)
+            #logging.debug(item)
             #logging.debug(time.time() - t)
 
 except OSError as err:
