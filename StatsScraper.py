@@ -42,7 +42,7 @@ for i, item in enumerate(tqdm(sorted(itemNameList))):
     t = time.time()
     r = requests.get(f"https://api.warframe.market/v1/items/{item}/statistics", headers=headers)
     #print(time.time() - t)
-    #time.sleep(2)
+    time.sleep(2)
     itemData = r.json()
     itemDataList = itemData["payload"]["statistics_live"]['90days']
     closedItemDataList = itemData["payload"]["statistics_closed"]['90days']
