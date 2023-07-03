@@ -249,7 +249,6 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
 
     #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
     avgCost = (inventory["purchasePrice"] * inventory["number"]).sum() / inventory["number"].sum()
-    logging.debug(item, avgCost)
     if numSellers == 0:
         postPrice = int(avgCost+30)
         if myOrderActive:
