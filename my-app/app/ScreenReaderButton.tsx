@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import config from "../../config.json";
 
 function ScreenReaderButton() {
   const [isRunning, setIsRunning] = useState(false);
@@ -14,7 +15,13 @@ function ScreenReaderButton() {
   };
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000); // Update every second
     fetchData();
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const handleButtonClick = () => {
@@ -35,12 +42,23 @@ function ScreenReaderButton() {
       .catch((error) => console.log(error));
   };
 
-  return (
+  return(
     <div>
-      <button className={isRunning ? 'p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700' : 'p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700'} onClick={handleButtonClick}>
+      <button
+        className={
+          isRunning
+            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
+            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+        }
+        onClick={handleButtonClick}
+      >
         {isRunning ? "Stop" : "Start"}
       </button>
-      <span>{isRunning ? " - Screen Reader Status: Running" : " - Screen Reader Status: Not running"}</span>
+      <span>
+        {isRunning
+          ? " - Screen Reader Status: Running"
+          : " - Screen Reader Status: Not running"}
+      </span>
     </div>
   );
 }

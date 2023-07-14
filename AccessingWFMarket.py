@@ -18,7 +18,7 @@ class WarframeApi:
             "Authorization": self.jwt_token,
         }
         self.lastRequestTime = 0
-        self.timeBetweenRequests = 2
+        self.timeBetweenRequests = 1/3
 
     def waitUntilDelayEnds(self):
         if (time.time() - self.lastRequestTime) < self.timeBetweenRequests:
@@ -75,7 +75,7 @@ def login(
         return None, None
     return (response.json()["payload"]["user"]["ingame_name"], response.headers["Authorization"])
 
-def postOrder(item, order_type, platinum, quantity, visible, modRank):
+def postOrder(item, order_type, platinum, quantity, visible, modRank, itemName):
     
     json_data = {
         "item": item,
@@ -86,8 +86,16 @@ def postOrder(item, order_type, platinum, quantity, visible, modRank):
     }
     if modRank:
         json_data["rank"] = modRank
+
+    
     
     response = warframeApi.post('https://api.warframe.market/v1/profile/orders', json=json_data)
+
+    if response.status_code == 200:
+        f = open("tradeLog.txt", "a")
+        f.write(f"POSTED - item: {itemName} - order_type : {order_type} - platinum : {platinum} - visible : {visible}\n")
+        f.close()
+
     return response
     
 
@@ -99,7 +107,7 @@ def getOrders():
     soup = BeautifulSoup(html_doc, 'html.parser')
     return json.loads(soup.find("script", {"id": "application-state"}).getText())["payload"]
 
-def updateListing(listing_id, platinum, quantity, visibility):
+def updateListing(listing_id, platinum, quantity, visibility, itemName, order_type):
     try:
         url = WFM_API + "/profile/orders/" + listing_id
         contents = {
@@ -109,6 +117,10 @@ def updateListing(listing_id, platinum, quantity, visibility):
         }
         response = warframeApi.put(url, json=contents)
         response.raise_for_status()  # Raises an exception for non-2xx status codes
+        if response.status_code == 200:
+            f = open("tradeLog.txt", "a")
+            f.write(f"POSTED - item: {itemName} - order_type : {order_type} - platinum : {platinum} - visible : {visibility}\n")
+            f.close()
         return True
     except requests.exceptions.RequestException as e:
         print(f"update_listing: {e}")

@@ -85,10 +85,10 @@ async def startup_event():
     import signal
     signal.signal(signal.SIGINT, receive_signal)
     logger = logging.getLogger("uvicorn.access")
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-    logger.addHandler(handler)
-    logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
+    #handler = logging.StreamHandler()
+    #handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    #logger.addHandler(handler)
+    #logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
     config.setConfigStatus("runningWarframeScreenDetect", False)
     config.setConfigStatus("runningLiveScraper", False)
@@ -336,6 +336,9 @@ def start_live_scraper():
     else:
         liveScraperProcess = subprocess.Popen(["python", "LiveScraper.py"])
         config.setConfigStatus("runningLiveScraper", True)
+        f = open("tradeLog.txt", "w")
+        f.write(f"Starting log file at {datetime.now()}\n")
+        f.close()
         return {"Executed": True}
 
 @app.post("/live_scraper/stop/")

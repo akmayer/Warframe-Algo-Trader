@@ -14,7 +14,13 @@ function LiveScraperButton() {
   };
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000); // Update every second
     fetchData();
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const handleButtonClick = () => {
