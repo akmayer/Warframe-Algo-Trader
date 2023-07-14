@@ -25,7 +25,7 @@ Warframe blends free-to-play mechanics with a premium currency system that is es
 ## How To Use
 
 ### Setting Up
-1. In WarframeMarketAuto, run `pip install -r requirements.txt`.
+1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
 2. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
 3. `cd ../` to return to the top level of the project.
 4. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
