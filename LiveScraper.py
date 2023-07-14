@@ -231,7 +231,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
             deleteOrder(myOrderID)
         return
     
-    if (closedAvgMetric >= 30 and priceRange >= 15) or priceRange >= 10 or closedAvgMetric >= 35:
+    if (closedAvgMetric >= 30 and priceRange >= 15) or priceRange >= 21 or closedAvgMetric >= 35:
         if myOrderActive:
             if (myPlatPrice != (postPrice)):
                 logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
