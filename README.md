@@ -4,6 +4,13 @@
 
 <img src="https://github.com/akmayer/WarframeMarketAuto/assets/11152158/7267a45f-2350-4461-8feb-4e3daec6a891" height="512">
 
+## Requirements
+
+- Python 3 (Programmed in Python3.11, would probably work with earlier versions but haven't tested)
+- Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
+- Pushbullet (Only necessary for any phone notifications)
+- Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
+
 ## Motivation
 
 Warframe blends free-to-play mechanics with a premium currency system that is essential to smooth player progression. Players can acquire this premium currency, platinum, either through in-game purchases or by engaging in a dynamic player-driven economy, where they can trade their virtual possessions with other players. To facilitate these trades and foster a thriving marketplace, platforms such as Warframe.market have emerged, revolutionizing the way players make trades. By using the information on this platform, this program aims to add liquidity to the market, delivering better value to both buyers and sellers.To achieve this, my program provides methods of algorithmically determining high interest items based on real-time market data, automatic postings to warframe.market, and an interactive frontend to control and track your inventory as you are playing. Additionally, it uses optical character recognition (OCR) to notice in-game events and give quick phone notifications when trading opportinies arise. Many players with active, seemingly promising, postings on warframe.market are afk in-game and difficult to reach. This program aims to reduce the impact that those users have on the website by both often providing better deals than those users and giving the user quick notifications to their own trades to encourage quick responses. The components involved are:
