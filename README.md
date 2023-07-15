@@ -22,6 +22,10 @@ Warframe blends free-to-play mechanics with a premium currency system that is es
 - Pytesseract: Pytesseract is used to perform optical character recognition on the player's screen, allowing it to recognize in-game events related to trading opportunities. When such opportunities arise, the program can send quick phone notifications to the player.
 - Pushbullet: Pushbullet is used for their friendly push notification api to send notifications to my phone. Note that you need pushbutton installed on your phone for this and there is more setting up of credentials.
 
+Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of how this method remains profitable for the user along with a link to a discord server where you can discuss this program with me.
+
+<img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/cccd01ed-f5e3-49da-bba1-8447c66c32ff width="495" height="270">
+
 ## How To Use
 
 ### Setting Up
