@@ -2,7 +2,7 @@
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/4602f014-a7df-40e9-b504-390a528d95a1)
 
-<img src="https://github.com/akmayer/WarframeMarketAuto/assets/11152158/7267a45f-2350-4461-8feb-4e3daec6a891" height="512">
+<img src="https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/965c21ca-73f8-47f3-abcb-cb896e1f939c" height="512">
 
 ## Requirements
 
@@ -30,15 +30,21 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 ### Setting Up
 1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
-2. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
-3. `cd ../` to return to the top level of the project.
-4. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
-5. Paste your in game name into the `config.json` file with the key, "inGameName".
-6. Get your jwt token to access your warframe.market account with their api. To do this:
+2. Type `pip install beautifulsoup4` directly into a cmd window.
+3. Replace Line 106 of `AccessingWFMarket.py` with `html_doc = warframeApi.get(f"https://warframe.market/profile/{config.inGameName}").text` until I push a commit to fix this.
+4. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
+5. `cd ../` to return to the top level of the project.
+6. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
+7. Paste your in game name into the `config.json` file with the key, "inGameName".
+8. Get your jwt token to access your warframe.market account with their api. To do this:
       - Open `getWFMtoken.py` with the python editor of your choice. Add the line at the bottom: `print(login(<YOUR_WFM_EMAIL>, <YOUR_WFM_PASSWORD>))`.
       - Run `python getWFMtoken.py` and copy the full token starting with "JWT". **"JWT" is part of the token.**
       - Paste this token into your config.json file with the key "wfm_jwt_token".
       - Note: If your platform is not pc or your language is not english, you will also need to add those as inputs.
+9. If you're on console change your platform in `AccessingWFMarket.py` to "ps4", "xbox"(probably), or "switch" (probably) until I push a commit adding platform to the config file D:
+
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/11c7d918-8e63-4412-a556-1364c49d519f)
+
 
 **Steps below are only required for pushbullet mobile notifications:**
 
@@ -58,7 +64,7 @@ If you are not on windows, then in the top level, run `uvicorn inventoryApi:app 
 
 ### Transaction Control
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/707da4e0-0306-40aa-b304-0521076eda97)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/e5b2c27a-28ae-4f81-887c-978fe3ef36ff)
 
 The first button, that will start out looking like "Stats Reader Status: Not running" starts to gather 7 days of data on every item on warframe.market (slowly, no more than 3 api calls a second as to not overload their systems and to comply with their TOS). This data is saved to allItemData.csv and takes multiple hours to complete to avoid burdening the warframe.market servers. Thus, I would only recommend clicking this button once a day at most, possibly before you go to sleep, since you don't need this data to be updating constantly. **You NEED to let this run to completion before the rest of the program will work fully, but don't worry, it's not too resource intensive so you can do other things while you wait :) Plus this program is about the long consistent gains, it doesn't have to be todays.**
 
@@ -70,11 +76,11 @@ The third button combines pyautogui with OCR to detect when you receive whispers
 
 You **_must_** set your in-game chat scale to 200 and your chat text size to LARGE for this to work. Additionally, you must extend your in game chat box as far horizontally as you can. If you playing on a 1920x1200 screen, this should be enough. When you are waiting for people to message you about trades, your screen should look like this: 
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/18db0b0a-88b6-4c9f-a707-6004745de5e3)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/89555782-ffc5-4a3a-83c1-4b36cee3fe66)
 
 If you are NOT on a 1920x1200 screen, click the Start button next to Screen Reader Status: Not running for a few seconds. Then alt-tab into warframe for a few seconds so that the program can detect where it thinks your whisper notifications are. Ideally, the whispers.png file should look like this:
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/24c5c350-b690-4882-b07b-4efe5fec8080)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/1549006a-5035-4617-82ea-e6419b02e6d6)
 
 which includes the arrow on the left but does not include the chat-minimizing icon on the right. 
 
@@ -86,12 +92,12 @@ If you have an Android then Pushbullet may not vibrate on notification which can
 
 ### Inventory Manager
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/c5779c70-f063-4cee-8baf-96bd84cba721)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/b6391dc5-e5ce-4ba2-8fbb-9d5553a560c2)
 
 When someone approaches you trying to sell an item to you, type its name in the Purchase New Item: section and the Price you bought it at, then click Buy. It will automatically be added to your inventory. If the Live Updater is running, then when it gets around to that item, it will automatically post a "sell" order on warframe.market for higher than your average purchase price on that item. When someone approaches you trying to buy that item off of you based on your posting, type the price into the textbox next to the "Sell" button in the row corresponding with that item and hit "Sell". If that was the last one of that item in your inventory, it will immediately delete your sell order on warframe.market so that you don't have a fake listing.
 
 ### Visualizations
 
-![image](https://github.com/akmayer/WarframeMarketAuto/assets/11152158/56631d7c-270f-44f0-b358-1f26aa591141)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/5e851eba-eec7-44be-b4f5-97bb7d44b07d)
 
 To see the transactions logged by this app, simply click "Load Graph" with no inputs and it will show everything in the log. This estimates your account value by exactly calculating your net platinum profit after each trade, and adding that to an estimation of how much your inventory is worth based on the prices you bought your items at. (Intuitively when you buy something, you aren't poorer, the money is just in held in your asset). Both the startDate and endDate parameters are optional, and adding only one will leave the other one uncapped.
