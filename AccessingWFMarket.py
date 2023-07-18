@@ -13,7 +13,7 @@ class WarframeApi:
             "Content-Type": "application/json; utf-8",
             "Accept": "application/json",
             "auth_type": "header",
-            "platform": "pc",
+            "platform": config.platform,
             "language": "en",
             "Authorization": self.jwt_token,
         }
