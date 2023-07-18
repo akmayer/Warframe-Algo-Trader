@@ -38,6 +38,7 @@ for i, item in enumerate(tqdm(sorted(itemNameList))):
     headers = {
         'Content-Type': 'application/json',
         'accept': 'application/json',
+        "platform" : config.platform
     }
     t = time.time()
     r = requests.get(f"https://api.warframe.market/v1/items/{item}/statistics", headers=headers)

@@ -46,7 +46,8 @@ config_data = {
     "inGameName" : "",
     "runningLiveScraper": False,
     "runningStatisticsScraper": False,
-    "runningWarframeScreenDetect": False
+    "runningWarframeScreenDetect": False,
+    "platform" : ""
 }
 
 if not os.path.exists(filename):

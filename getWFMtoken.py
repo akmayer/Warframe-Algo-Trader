@@ -1,5 +1,6 @@
 import json
 import requests
+import config
 
 WFM_API = "https://api.warframe.market/v1"
 
@@ -23,3 +24,11 @@ def login(
     if response.status_code != 200:
         return None, None
     return (response.json()["payload"]["user"]["ingame_name"], response.headers["Authorization"])
+
+# UNCOMMENT LINE BELOW IF YOU'RE ON PC:
+# MAKE SURE TO FILL IN <YOUR_INFO> BLANKS WITH YOUR INFO
+# print(login("<YOUR_WF.M_EMAIL>", "<YOUR_WF.M_PASSWORD>"))
+#
+# IF YOU'RE ON A NON-PC PLATFORM UNCOMMENT THIS LINE BELOW AND REPLACE THE <YOUR_PLATFORM> WITH WHATEVER PLATFORM YOU'RE ON
+# "pc" for pc, "ps4" for ps4, "xbox" for xbox, "switch" for switch
+# print(login("<YOUR_WF.M_EMAIL>", "<YOUR_WF.M_PASSWORD>", "<YOUR_PLATFORM>"))

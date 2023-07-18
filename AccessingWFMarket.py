@@ -103,7 +103,7 @@ def deleteOrder(orderID):
     warframeApi.delete(f'https://api.warframe.market/v1/profile/orders/{orderID}')
     
 def getOrders():
-    html_doc = warframeApi.get("https://warframe.market/profile/Yelbuzz").text
+    html_doc = warframeApi.get(f"https://warframe.market/profile/{config.inGameName}").text
     soup = BeautifulSoup(html_doc, 'html.parser')
     return json.loads(soup.find("script", {"id": "application-state"}).getText())["payload"]
 

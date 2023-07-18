@@ -215,7 +215,7 @@ async def sellItem(item : Item):
         return {"Executed" : False, "Reason": "Item not in database."}
 
 def get_order_id(item_name: str):
-    url = f"https://api.warframe.market/v1/profile/Yelbuzz/orders"
+    url = f"https://api.warframe.market/v1/profile/{config.inGameName}/orders"
 
     headers = {
         "Content-Type": "application/json; utf-8",

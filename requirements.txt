@@ -13,3 +13,4 @@ pytesseract==0.3.10
 requests==2.31.0
 tqdm==4.65.0
 uvicorn==0.22.0
+beautifulsoup4==4.12.2
