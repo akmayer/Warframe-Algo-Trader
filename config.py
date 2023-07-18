@@ -23,6 +23,7 @@ pb_token = configData["pushbutton_token"]
 pushbutton_device_iden = configData["pushbutton_device_iden"]
 jwt_token = configData["wfm_jwt_token"]
 inGameName = configData['inGameName']
+platform = configData['platform']
 # Read JSON file
 with open('settings.json') as file:
     data = json.load(file)
@@ -33,4 +34,3 @@ priceShiftThreshold = data['priceShfitThreshold']
 avgPriceCap = data['avgPriceCap']
 volumeThreshold = data['volumeThreshold']
 rangeThreshold = data['rangeThreshold']
-platform = data['platform']
