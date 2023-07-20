@@ -3,7 +3,7 @@
 
     ],
     "priceShfitThreshold" : -1,
-    "avgPriceCap" : 600,
+    "avgPriceCap" : 1,
     "volumeThreshold" : 15,
     "rangeThreshold" : 10
 }

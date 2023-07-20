@@ -48,6 +48,23 @@ def getBuySellOverlap():
     dfFilter = averaged_df[(((averaged_df.get("volume") > config.volumeThreshold) & (averaged_df.get("range") > config.rangeThreshold)) | (averaged_df.get("name").isin(inventoryNames))) & (averaged_df.get("order_type") == "closed")]
 
     dfFilter = dfFilter.sort_values(by="range", ascending=False)
+    if len(dfFilter) == 0:
+        return pd.DataFrame.from_dict(
+            {
+                "name" : [],
+                "minSell" : [],
+                "maxBuy" : [],
+                "overlap" : [],
+                "closedVol" : [],
+                "closedMin" : [],
+                "closedMax" : [],
+                "closedAvg" : [],
+                "closedMedian" : [],
+                "priceShift" : [],
+                "mod_rank" : [],
+                "item_id" : []
+            }
+        ).set_index("name")
     dfFilter["weekPriceShift"] = dfFilter.apply(getWeekIncrease, axis=1)
     dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames))]
         
@@ -127,11 +144,11 @@ def deleteAllOrders():
 
 def getFilteredDF(item):
     r = warframeApi.get(f"https://api.warframe.market/v1/items/{item}/orders")
+    logging.debug(r)
     try:
         data = r.json()
     except:
-        logging.debug(r)
-        return
+        return pd.DataFrame()
     data = data["payload"]["orders"]
     df = pd.DataFrame.from_dict(data)
     df["status"] = df.apply(lambda row : row["user"]["status"], axis=1)
@@ -167,13 +184,6 @@ def getMyOrderInformation(item, orderType, currentOrders):
         myOrderActive = True
     
     return myOrderID, visibility, myPlatPrice, myOrderActive
-
-
-def getLivePriceRange(liveOrderDF, numBuyers, numSellers):
-    if numBuyers == 0:
-        lowPrice = 0
-    else:
-        lowPrice = liveOrderDF[liveOrderDF.get("order_type") == "sell"]
 
 def restructureLiveOrderDF(liveOrderDF):
     liveBuyerDF = liveOrderDF[liveOrderDF.get("order_type") == "buy"].sort_values(by="platinum", ascending = False)
@@ -232,6 +242,8 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
         return
     
     if (closedAvgMetric >= 30 and priceRange >= 15) or priceRange >= 21 or closedAvgMetric >= 35:
+        if (closedAvgMetric == 30 and priceRange == 15) or priceRange == 21 or closedAvgMetric == 35:
+            postPrice -= 1
         if myOrderActive:
             if (myPlatPrice != (postPrice)):
                 logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
@@ -316,7 +328,7 @@ interestingItems = list(buySellOverlap.index)
 
 try:
     while config.getConfigStatus("runningLiveScraper"):
-        logging.debug("Interesting Items:\n" + ", ".join(interestingItems).replace("_", " ").title())
+        
 
         con = sqlite3.connect('inventory.db')
 
@@ -328,6 +340,8 @@ try:
         #a new DFFilter last line so hopefully some functions are made in StatsInterpreter for making DFFilter and buySellOverlap
         buySellOverlap = getBuySellOverlap()
         interestingItems = list(buySellOverlap.index)
+
+        logging.debug("Interesting Items:\n" + ", ".join(interestingItems).replace("_", " ").title())
 
         currentOrders = getOrders()
         myBuyOrdersDF = pd.DataFrame.from_dict(currentOrders["buy_orders"])
@@ -352,6 +366,9 @@ try:
             itemStats = buySellOverlap.loc[item]
             logging.debug(item.replace("_", " ").title() + f"(closedAvg: {round(itemStats['closedAvg'], 2)}):")
             liveOrderDF = getFilteredDF(item)
+            if liveOrderDF.empty:
+                logging.warn("There was an error with seeing the live orders on this item.")
+                continue
             itemID = getItemId(buySellOverlap, item)
             modRank = getItemRank(buySellOverlap, item)
 

@@ -6,13 +6,19 @@ import os
 import numpy as np
 import time
 import config
+import logging
+
+logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
+
 
 allItemsLink = "https://api.warframe.market/v1/items"
 r = requests.get(allItemsLink)
 itemList = r.json()["payload"]["items"]
-itemNameList = [x["url_name"] for x in itemList]
+itemNameList = [x["url_name"] for x in itemList if "relic" not in x["url_name"]]
 
-
+f = open("statsScraping.log", 'w')
+f.write(f"Max Number Of Items: {len(itemNameList)}\n")
+f.close()
 
 csvFileName = "allItemData.csv"
 
@@ -33,8 +39,11 @@ f = open(csvFileName, "w")
 f.write("name,datetime,order_type,volume,min_price,max_price,range,median,avg_price,mod_rank\n")
 f.close()
 
+itemsParsed = 0
+
 for i, item in enumerate(tqdm(sorted(itemNameList))):
-    #f = open(csvFileName, "a")
+    if not config.getConfigStatus("runningStatisticsScraper"):
+        break
     headers = {
         'Content-Type': 'application/json',
         'accept': 'application/json',
@@ -42,8 +51,13 @@ for i, item in enumerate(tqdm(sorted(itemNameList))):
     }
     t = time.time()
     r = requests.get(f"https://api.warframe.market/v1/items/{item}/statistics", headers=headers)
-    #print(time.time() - t)
-    time.sleep(2)
+    logging.debug(r)
+    if str(r.status_code)[0] != "2":
+        continue
+
+    itemsParsed += 1
+
+    time.sleep(4)
     itemData = r.json()
     itemDataList = itemData["payload"]["statistics_live"]['90days']
     closedItemDataList = itemData["payload"]["statistics_closed"]['90days']
@@ -102,6 +116,10 @@ for i, item in enumerate(tqdm(sorted(itemNameList))):
     
     #f.close()
 
+f = open("statsScraping.log", 'a')
+f.write(f"Number of Items WFM Responded To Requests For: {itemsParsed}\n")
+f.close()
+
 itemListDF = pd.DataFrame.from_dict(itemList)
 #itemListDF
 df = pd.read_csv("allItemData.csv")
@@ -109,10 +127,5 @@ df = pd.read_csv("allItemData.csv")
 df["item_id"] = df.apply(lambda row : itemListDF[itemListDF["url_name"] == row["name"]].reset_index().loc[0, "id"], axis=1)
 #df
 df.to_csv("allItemData.csv", index=False)
-
-try:
-    os.remove("allItemDataBackup.csv")
-except FileNotFoundError:
-    pass
 
 config.setConfigStatus("runningStatisticsScraper", False)

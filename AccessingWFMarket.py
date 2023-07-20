@@ -18,7 +18,7 @@ class WarframeApi:
             "Authorization": self.jwt_token,
         }
         self.lastRequestTime = 0
-        self.timeBetweenRequests = 2
+        self.timeBetweenRequests = 3
 
     def waitUntilDelayEnds(self):
         if (time.time() - self.lastRequestTime) < self.timeBetweenRequests:

@@ -221,7 +221,7 @@ def get_order_id(item_name: str):
         "Content-Type": "application/json; utf-8",
         "Accept": "application/json",
         "auth_type": "header",
-        "platform": "pc",
+        "platform": config.platform,
         "language": "en",
         "Authorization" : jwt_token
     }
@@ -263,7 +263,7 @@ def delete_order(item_name: str):
         "Content-Type": "application/json; utf-8",
         "Accept": "application/json",
         "auth_type": "header",
-        "platform": "pc",
+        "platform": config.platform,
         "language": "en",
         "Authorization": jwt_token,
     }

@@ -28,29 +28,29 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 ## How To Use
 
+IF YOU'RE COMPLETELY UNFAMILIAR WITH THE COMMAND LINE AND PYTHON, CHECK OUT THIS GUIDE FIRST: https://rentry.co/wfmalgotraderbasic2
+(To be honest the guide is very well written I would recommend checking it out anyway)
 ### Setting Up
 1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
-2. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
-3. `cd ../` to return to the top level of the project.
-4. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
-5. Paste your in game name into the `config.json` file with the key, "inGameName".
-6. Paste your platform into the `config.json` file with the key, "platform".
-7. Get your jwt token to access your warframe.market account with their api. To do this:
-      - Open `getWFMtoken.py` with the python editor of your choice. Add the line at the bottom: `print(login(<YOUR_WFM_EMAIL>, <YOUR_WFM_PASSWORD>))`.
-      - Run `python getWFMtoken.py` and copy the full token starting with "JWT ...". **"JWT" is part of the token.**
-      - Paste this token into your config.json file with the key "wfm_jwt_token".
-      - Note: If your platform is not pc or your language is not english, you will also need to add those as inputs.
+2. Run `pip install uvicorn`.
+3. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
+4. `cd ../` to return to the top level of the project.
+5. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
+6. Paste your in game name into the `config.json` file with the key, "inGameName".
+7. Paste your platform into the `config.json` file with the key, "platform".
+8. Get your jwt token to access your warframe.market account with their api. To do this:
+      - Look at step 10 of this guide: https://rentry.co/wfmalgotraderbasic2
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/11c7d918-8e63-4412-a556-1364c49d519f)
 
 
 **Steps below are only required for pushbullet mobile notifications:**
 
-8. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
-9.  Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device. 
-10.  After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
-11.  Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
-12.  Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
+9. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
+10.  Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device. 
+11.  After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
+12.  Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
+13.  Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
 
 ### Running
 
