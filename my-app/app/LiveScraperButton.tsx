@@ -1,3 +1,4 @@
+import { environment } from "@/environment";
 import { useState, useEffect } from "react";
 
 function LiveScraperButton() {
@@ -5,7 +6,7 @@ function LiveScraperButton() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/live_scraper");
+      const response = await fetch(`${environment.API_BASE_URL}/live_scraper`);
       const data = await response.json();
       setIsRunning(data.Running);
     } catch (error) {
@@ -25,8 +26,8 @@ function LiveScraperButton() {
 
   const handleButtonClick = () => {
     const apiUrl = isRunning
-      ? "http://127.0.0.1:8000/live_scraper/stop"
-      : "http://127.0.0.1:8000/live_scraper/start";
+      ? `${environment.API_BASE_URL}/live_scraper/stop`
+      : `${environment.API_BASE_URL}/live_scraper/start`;
 
     fetch(apiUrl, {
       method: "POST",
@@ -43,10 +44,21 @@ function LiveScraperButton() {
 
   return (
     <div className="p-2">
-      <button className={isRunning ? 'p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700' : 'p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700'} onClick={handleButtonClick}>
+      <button
+        className={
+          isRunning
+            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
+            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+        }
+        onClick={handleButtonClick}
+      >
         {isRunning ? "Stop" : "Start"}
       </button>
-      <span>{isRunning ? " - Live Updater Status: Running" : " - Live Updater Status: Not running"}</span>
+      <span>
+        {isRunning
+          ? " - Live Updater Status: Running"
+          : " - Live Updater Status: Not running"}
+      </span>
     </div>
   );
 }

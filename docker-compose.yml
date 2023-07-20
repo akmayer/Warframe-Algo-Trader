@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  python-app:
+    image: warframe-algo-trader-python-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: warframe-algo-trader-python-app
+    volumes:
+      - /home/james/repos/personal/Warframe-Algo-Trader:/app
+    ports:
+      - 8000:8000
+    restart: on-failure
+
+  web-ui:
+    image: warframe-algo-trader-web-ui
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+    container_name: warframe-algo-trader-web-ui
+    ports:
+      - 3000:3000
+    restart: on-failure

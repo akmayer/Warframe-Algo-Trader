@@ -4,13 +4,6 @@
 
 <img src="https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/965c21ca-73f8-47f3-abcb-cb896e1f939c" height="512">
 
-## Requirements
-
-- Python 3 (Programmed in Python3.11, would probably work with earlier versions but haven't tested)
-- Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
-- Pushbullet (Only necessary for any phone notifications)
-- Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
-
 ## Motivation
 
 Warframe blends free-to-play mechanics with a premium currency system that is essential to smooth player progression. Players can acquire this premium currency, platinum, either through in-game purchases or by engaging in a dynamic player-driven economy, where they can trade their virtual possessions with other players. To facilitate these trades and foster a thriving marketplace, platforms such as Warframe.market have emerged, revolutionizing the way players make trades. By using the information on this platform, this program aims to add liquidity to the market, delivering better value to both buyers and sellers.To achieve this, my program provides methods of algorithmically determining high interest items based on real-time market data, automatic postings to warframe.market, and an interactive frontend to control and track your inventory as you are playing. Additionally, it uses optical character recognition (OCR) to notice in-game events and give quick phone notifications when trading opportinies arise. Many players with active, seemingly promising, postings on warframe.market are afk in-game and difficult to reach. This program aims to reduce the impact that those users have on the website by both often providing better deals than those users and giving the user quick notifications to their own trades to encourage quick responses. The components involved are:
@@ -28,33 +21,68 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 ## How To Use
 
-IF YOU'RE COMPLETELY UNFAMILIAR WITH THE COMMAND LINE AND PYTHON, CHECK OUT THIS GUIDE FIRST: https://rentry.co/wfmalgotraderbasic2
-(To be honest the guide is very well written I would recommend checking it out anyway)
-### Setting Up
+### Initialization
+
+#### Docker:
+
+> A limitation of running this project with Docker is that you will be unable to utilize OCR for detecting when you've received an in-game message.
+
+##### Requirements:
+
+- [Docker](https://docs.docker.com/get-docker/)
+
+#### Steps:
+
+1. Initialize the configuration files by running `docker run --rm -v "$(pwd):/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux.
+
+#### From source:
+
+> IF YOU'RE COMPLETELY UNFAMILIAR WITH THE COMMAND LINE AND PYTHON, CHECK OUT THIS GUIDE FIRST: https://rentry.co/wfmalgotraderbasic2
+> (To be honest the guide is very well written I would recommend checking it out anyway)
+
+##### Requirements:
+
+- Python 3 (Programmed in Python3.11, would probably work with earlier versions but haven't tested)
+- Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
+- Pushbullet (Only necessary for any phone notifications)
+- Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
+
+##### Steps:
+
 1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
 2. Run `pip install uvicorn`.
 3. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
 4. `cd ../` to return to the top level of the project.
 5. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
-6. Paste your in game name into the `config.json` file with the key, "inGameName".
-7. Paste your platform into the `config.json` file with the key, "platform".
-8. Get your jwt token to access your warframe.market account with their api. To do this:
-      - Look at step 10 of this guide: https://rentry.co/wfmalgotraderbasic2
+
+### Setup
+
+1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
+2. Paste your platform into the `config.json` file with the key, "platform".
+3. Get your jwt token to access your warframe.market account with their api. To do this:
+   - Look at step 10 of this guide: https://rentry.co/wfmalgotraderbasic2
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/11c7d918-8e63-4412-a556-1364c49d519f)
 
-
 **Steps below are only required for pushbullet mobile notifications:**
 
-9. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
-10.  Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device. 
-11.  After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
-12.  Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
-13.  Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
+4. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
+5. Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device.
+6. After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
+7. Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
+8. Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
 
 ### Running
 
-If you are on windows, you can navigate to the top level of the project and run `startAll.bat`. The application is a locally hosted website at 127.0.0.1:3000, which you can open in a browser. If you want to see the api, that's hosted at 127.0.0.1:8000. 
+#### Docker
+
+Running `docker compose up --build` will start two containers, one for the python app, running on port `8000` and the other running the web UI, running on port `3000`.
+
+![image](https://user-images.githubusercontent.com/23193271/254992499-82d408e6-0a4f-4dcf-909b-f95d31e268a6.png)
+
+#### From source
+
+If you are on windows, you can navigate to the top level of the project and run `startAll.bat`. The application is a locally hosted website at 127.0.0.1:3000, which you can open in a browser. If you want to see the api, that's hosted at 127.0.0.1:8000.
 
 If you are not on windows, then in the top level, run `uvicorn inventoryApi:app --reload` to run the api. In a new terminal window, navigate into the `my-app` directory then run `npm run dev` to run the website. The addresses will be the same.
 
@@ -66,13 +94,13 @@ If you are not on windows, then in the top level, run `uvicorn inventoryApi:app 
 
 The first button, that will start out looking like "Stats Reader Status: Not running" starts to gather 7 days of data on every item on warframe.market (slowly, no more than 3 api calls a second as to not overload their systems and to comply with their TOS). This data is saved to allItemData.csv and takes multiple hours to complete to avoid burdening the warframe.market servers. Thus, I would only recommend clicking this button once a day at most, possibly before you go to sleep, since you don't need this data to be updating constantly. **You NEED to let this run to completion before the rest of the program will work fully, but don't worry, it's not too resource intensive so you can do other things while you wait :) Plus this program is about the long consistent gains, it doesn't have to be todays.**
 
-The second button uses that data to determine which items seem "interesting". Then, it will delete all the buy and sell orders on your account to replace with its suggested ones. It will go through the interesting items and put "buy" posts on warframe.market at a higher price than any one else, **if** it decide's it's a good time to do so based on the currnt live postings. You may have a lot of "buy" posts up so ensure that you have enough platinum to honor people's messages to you. If you're technically inclined and know some python, you can fidget with the parameters in `LiveScraper.py` which can provide flexibility about which items you personally find interesting, or limit the number of total buy requests you can put up at once. The program will also put up "sell" orders automatically based on your inventory, but strictly higher than what you bought that item for on average, to ensure that the user is not at a loss by running this program. Leave this button on running in the background while you have trades available and have warframe open to be able to trade. 
+The second button uses that data to determine which items seem "interesting". Then, it will delete all the buy and sell orders on your account to replace with its suggested ones. It will go through the interesting items and put "buy" posts on warframe.market at a higher price than any one else, **if** it decide's it's a good time to do so based on the currnt live postings. You may have a lot of "buy" posts up so ensure that you have enough platinum to honor people's messages to you. If you're technically inclined and know some python, you can fidget with the parameters in `LiveScraper.py` which can provide flexibility about which items you personally find interesting, or limit the number of total buy requests you can put up at once. The program will also put up "sell" orders automatically based on your inventory, but strictly higher than what you bought that item for on average, to ensure that the user is not at a loss by running this program. Leave this button on running in the background while you have trades available and have warframe open to be able to trade.
 
 The third button combines pyautogui with OCR to detect when you receive whispers and send a notification to your phone when you do. Leave this on at the same time as the second button if you plan on doing other things while you let the whispers come to you and the notifactions let you respond quickly.
 
 **A note about OCR and phone notifications:**
 
-You **_must_** set your in-game chat scale to 200 and your chat text size to LARGE for this to work. Additionally, you must extend your in game chat box as far horizontally as you can. If you playing on a 1920x1200 screen, this should be enough. When you are waiting for people to message you about trades, your screen should look like this: 
+You **_must_** set your in-game chat scale to 200 and your chat text size to LARGE for this to work. Additionally, you must extend your in game chat box as far horizontally as you can. If you playing on a 1920x1200 screen, this should be enough. When you are waiting for people to message you about trades, your screen should look like this:
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/89555782-ffc5-4a3a-83c1-4b36cee3fe66)
 
@@ -80,7 +108,7 @@ If you are NOT on a 1920x1200 screen, click the Start button next to Screen Read
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/1549006a-5035-4617-82ea-e6419b02e6d6)
 
-which includes the arrow on the left but does not include the chat-minimizing icon on the right. 
+which includes the arrow on the left but does not include the chat-minimizing icon on the right.
 
 If it does not look like this, you may have to fidget with values in line 74 of `AutoScanWaframe.py`.
 

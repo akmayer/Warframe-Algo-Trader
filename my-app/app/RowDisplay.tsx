@@ -1,30 +1,31 @@
+import { environment } from "@/environment";
 import { useState } from "react";
 import { useEffect } from "react";
 
 interface Row {
-    id: number;
-    name: string;
-    purchasePrice: number;
-    listedPrice: number;
-    number: number;
-  }
-  
+  id: number;
+  name: string;
+  purchasePrice: number;
+  listedPrice: number;
+  number: number;
+}
+
 export default function RowDisplay() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<Row[]>([]);
   const [inProg, setInProg] = useState("");
 
   useEffect(() => {
     // Fetch data from the REST API
     const interval = setInterval(() => {
       console.log("ping");
-      fetch("http://127.0.0.1:8000/items")
+      fetch(`${environment.API_BASE_URL}/items`)
         .then((response) => response.json())
         .then((data) => setRows(data))
         .catch((error) => console.log(error));
     }, 1000); // Update every second
 
     console.log("In useEffect");
-    fetch("http://127.0.0.1:8000/items")
+    fetch(`${environment.API_BASE_URL}/items`)
       .then((response) => response.json())
       .then((data) => setRows(data))
       .catch((error) => console.log(error));
@@ -35,19 +36,18 @@ export default function RowDisplay() {
   }, []);
 
   const handleButtonClick = (
-    itemName,
-    purchasePrice,
-    listedPrice,
-    number,
-    price,
-    buttonId
+    itemName: string,
+    purchasePrice: number,
+    listedPrice: number,
+    number: number,
+    price: string,
+    buttonId: string
   ) => {
-
     if (price.trim() === "") {
       // Do nothing if the price is not entered
       return;
     }
-    
+
     const updatedNumber = number - 1;
     setInProg("IN PROGRESS");
 
@@ -65,10 +65,10 @@ export default function RowDisplay() {
       price: parseFloat(price),
     };
     // Disable the button
-    document.getElementById(buttonId).disabled = true;
+    (document.getElementById(buttonId) as HTMLButtonElement)!.disabled = true;
 
     // Trigger PUT API call to "/market/{item_name}"
-    fetch(`http://127.0.0.1:8000/market/${itemName}`, {
+    fetch(`${environment.API_BASE_URL}/market/${itemName}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export default function RowDisplay() {
         setInProg("");
 
         // After the PUT API call to "/market/{item_name}" is completed, trigger the POST API call to "/transaction/"
-        fetch(`http://127.0.0.1:8000/transaction/`, {
+        fetch(`${environment.API_BASE_URL}/transaction/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export default function RowDisplay() {
             console.log(transactionResponseData);
 
             // After the POST API call to "/transaction/" is completed, trigger the GET API call to "/item"
-            fetch(`http://127.0.0.1:8000/item/sell`, {
+            fetch(`${environment.API_BASE_URL}/item/sell`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -108,11 +108,13 @@ export default function RowDisplay() {
                 console.log(itemResponseData);
 
                 // After the PUT API call to "/item" is completed, trigger the GET API call to "/items"
-                fetch("http://127.0.0.1:8000/items")
+                fetch(`${environment.API_BASE_URL}/items`)
                   .then((response) => response.json())
                   .then((data) => {
                     setRows(data);
-                    document.getElementById(buttonId).disabled = false;
+                    (document.getElementById(
+                      buttonId
+                    ) as HTMLButtonElement)!.disabled = false;
                   })
                   .catch((error) => console.log(error));
               })
@@ -160,7 +162,8 @@ export default function RowDisplay() {
                         row.purchasePrice,
                         row.listedPrice,
                         row.number,
-                        document.getElementById(textBoxId).value,
+                        (document.getElementById(textBoxId) as HTMLInputElement)
+                          ?.value,
                         buttonId
                       )
                     }

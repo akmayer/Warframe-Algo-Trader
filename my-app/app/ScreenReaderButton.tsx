@@ -1,12 +1,12 @@
+import { environment } from "@/environment";
 import { useState, useEffect } from "react";
-import config from "../../config.json";
 
 function ScreenReaderButton() {
   const [isRunning, setIsRunning] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/screen_reader");
+      const response = await fetch(`${environment.API_BASE_URL}/screen_reader`);
       const data = await response.json();
       setIsRunning(data.Running);
     } catch (error) {
@@ -26,8 +26,8 @@ function ScreenReaderButton() {
 
   const handleButtonClick = () => {
     const apiUrl = isRunning
-      ? "http://127.0.0.1:8000/screen_reader/stop"
-      : "http://127.0.0.1:8000/screen_reader/start";
+      ? `${environment.API_BASE_URL}/screen_reader/stop`
+      : `${environment.API_BASE_URL}/screen_reader/start`;
 
     fetch(apiUrl, {
       method: "POST",
@@ -42,7 +42,7 @@ function ScreenReaderButton() {
       .catch((error) => console.log(error));
   };
 
-  return(
+  return (
     <div>
       <button
         className={
