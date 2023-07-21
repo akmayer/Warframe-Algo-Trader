@@ -16,6 +16,8 @@ class WarframeApi:
             "platform": config.platform,
             "language": "en",
             "Authorization": self.jwt_token,
+            # TODO: Include version number in the user agent
+            'User-Agent': 'Warframe Algo Trader',
         }
         self.lastRequestTime = 0
         self.timeBetweenRequests = 3
@@ -54,13 +56,6 @@ WFM_API = "https://api.warframe.market/v1"
 
 warframeApi = WarframeApi()
 
-def getItemId(url_name):
-    allItemsLink = "https://api.warframe.market/v1/items"
-    r = requests.get(allItemsLink)
-    itemList = r.json()["payload"]["items"]
-    allItemDF = pd.DataFrame.from_dict(itemList)
-    return allItemDF[allItemDF.get("url_name") == url_name].reset_index().loc[0, "id"]
-
 def login(
     user_email: str, user_password: str, platform: str = "pc", language: str = "en"
 ):
@@ -89,7 +84,7 @@ def postOrder(item, order_type, platinum, quantity, visible, modRank, itemName):
 
     
     
-    response = warframeApi.post('https://api.warframe.market/v1/profile/orders', json=json_data)
+    response = warframeApi.post(f'{WFM_API}/profile/orders', json=json_data)
 
     if response.status_code == 200:
         f = open("tradeLog.txt", "a")
@@ -100,7 +95,7 @@ def postOrder(item, order_type, platinum, quantity, visible, modRank, itemName):
     
 
 def deleteOrder(orderID):
-    warframeApi.delete(f'https://api.warframe.market/v1/profile/orders/{orderID}')
+    warframeApi.delete(f'{WFM_API}/profile/orders/{orderID}')
     
 def getOrders():
     html_doc = warframeApi.get(f"https://warframe.market/profile/{config.inGameName}").text
