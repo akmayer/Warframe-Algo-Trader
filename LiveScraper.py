@@ -122,8 +122,13 @@ def updateDBPrice(itemName, listedPrice):
     con.commit()
     con.close()
 
-def getItemId(buySellOverlap, url_name):
-    return buySellOverlap.loc[url_name, "item_id"]
+def getItemId(url_name):
+    try:
+        df = pd.read_csv("allItemDataBackup.csv")
+    except FileNotFoundError:
+        df = pd.read_csv("allItemData.csv")
+    df = df.set_index("name")
+    return df.loc[url_name, "item_id"].iloc[0]
 
 def getItemRank(buySellOverlap, url_name):
     if np.isnan(buySellOverlap.loc[url_name, "mod_rank"]):
@@ -369,7 +374,7 @@ try:
             if liveOrderDF.empty:
                 logging.warn("There was an error with seeing the live orders on this item.")
                 continue
-            itemID = getItemId(buySellOverlap, item)
+            itemID = getItemId(item)
             modRank = getItemRank(buySellOverlap, item)
 
             compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory)

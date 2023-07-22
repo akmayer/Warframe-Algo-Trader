@@ -111,7 +111,7 @@ async def testLog():
 async def root():
     return {"Nothing Here!": True}
 
-@app.get("/all_items/")
+@app.get("/all_items")
 async def get_a_list_of_names_of_all_tradable_items():
     allItemsLink = "https://api.warframe.market/v1/items"
     r = requests.get(allItemsLink)
@@ -119,7 +119,7 @@ async def get_a_list_of_names_of_all_tradable_items():
     itemNameList = [x["url_name"] for x in itemList]
     return {"item_names" : itemNameList}
 
-@app.get("/items/")
+@app.get("/items")
 async def getItems():
     jsonArray = []
     con = sqlite3.connect("inventory.db")
@@ -131,7 +131,7 @@ async def getItems():
     con.close()
     return jsonArray
 
-@app.get("/items/sum/")
+@app.get("/items/sum")
 async def sumItems():
     con = sqlite3.connect("inventory.db")
     cur = con.cursor()
@@ -140,7 +140,7 @@ async def sumItems():
     con.close()
     return {"total_purchase_price": result[0], "total_listed_price": result[1]}
 
-@app.post("/item/")
+@app.post("/item")
 async def addItem(item : Item):
     con = sqlite3.connect("inventory.db")
     cur = con.cursor()
@@ -161,7 +161,7 @@ async def addItem(item : Item):
         return {"Executed" : False, "Reason": "Need a purchase price and number."}
         
 
-@app.delete("/item/")
+@app.delete("/item")
 async def removeItem(item : Item):
     con = sqlite3.connect("inventory.db")
     cur = con.cursor()
@@ -175,7 +175,7 @@ async def removeItem(item : Item):
         con.close()
         return {"Executed" : False, "Reason": "Item not in database."}
 
-@app.put("/item/")
+@app.put("/item")
 async def updateItem(item : Item):
     if (item.number == 0):
         await removeItem(item)
@@ -278,7 +278,7 @@ def delete_order(item_name: str):
         detail=f'Something went wrong accessing wf.market api.',
     )
 
-@app.get("/transactions/")
+@app.get("/transactions")
 async def get_transactions():
     jsonArray = []
     con = sqlite3.connect("inventory.db")
@@ -299,7 +299,7 @@ async def get_transactions():
     con.close()
     return jsonArray
 
-@app.post("/transaction/")
+@app.post("/transaction")
 def create_transaction(t : Transact):
     conn = sqlite3.connect("inventory.db")
     cursor = conn.cursor()
@@ -324,11 +324,11 @@ def create_transaction(t : Transact):
 
     return {"message": "Transaction created successfully"}
 
-@app.get("/live_scraper/")
+@app.get("/live_scraper")
 def get_live_scraper_status():
     return {"Running" : config.getConfigStatus("runningLiveScraper")}
 
-@app.post("/live_scraper/start/")
+@app.post("/live_scraper/start")
 def start_live_scraper():
     global liveScraperProcess
     if config.getConfigStatus("runningLiveScraper"):
@@ -341,7 +341,7 @@ def start_live_scraper():
         f.close()
         return {"Executed": True}
 
-@app.post("/live_scraper/stop/")
+@app.post("/live_scraper/stop")
 def stop_live_scraper():
     global liveScraperProcess
     if liveScraperProcess == None:
@@ -350,11 +350,11 @@ def stop_live_scraper():
     liveScraperProcess.wait()
     return {"Executed": True}
 
-@app.get("/stats_scraper/")
+@app.get("/stats_scraper")
 def get_stats_scraper_status():
     return {"Running" : config.getConfigStatus("runningStatisticsScraper")}
 
-@app.post("/stats_scraper/start/")
+@app.post("/stats_scraper/start")
 def start_stats_scraper():
     global statisticsScraperProcess
     if config.getConfigStatus("runningStatisticsScraper"):
@@ -364,7 +364,7 @@ def start_stats_scraper():
         config.setConfigStatus("runningStatisticsScraper", True)
         return {"Executed": True}
 
-@app.post("/stats_scraper/stop/")
+@app.post("/stats_scraper/stop")
 def stop_stats_scraper():
     global statisticsScraperProcess
     if statisticsScraperProcess == None:
@@ -373,11 +373,11 @@ def stop_stats_scraper():
     statisticsScraperProcess.wait()
     return {"Executed": True}
 
-@app.get("/screen_reader/")
+@app.get("/screen_reader")
 def get_screen_reader_status():
     return {"Running" : config.getConfigStatus("runningWarframeScreenDetect")}
 
-@app.post("/screen_reader/start/")
+@app.post("/screen_reader/start")
 def start_screen_reader():
     global screenReaderProcess
     if config.getConfigStatus("runningWarframeScreenDetect"):
@@ -387,7 +387,7 @@ def start_screen_reader():
         config.setConfigStatus("runningWarframeScreenDetect", True)
         return {"Executed": True}
 
-@app.post("/screen_reader/stop/")
+@app.post("/screen_reader/stop")
 def stop_screen_reader():
     global screenReaderProcess
     if screenReaderProcess == None:
@@ -396,7 +396,7 @@ def stop_screen_reader():
     screenReaderProcess.wait()
     return {"Executed": True}
 
-@app.get("/graph/")
+@app.get("/graph")
 def write_graph_to_file(startDate : str | None = None, endDate : str | None = None):
     if startDate == None or startDate == "":
         startDate = "1990"

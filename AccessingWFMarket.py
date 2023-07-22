@@ -73,10 +73,10 @@ def login(
 def postOrder(item, order_type, platinum, quantity, visible, modRank, itemName):
     
     json_data = {
-        "item": item,
-        "order_type": order_type,
-        "platinum": platinum,
-        "quantity": quantity,
+        "item": str(item),
+        "order_type": str(order_type),
+        "platinum": int(platinum),
+        "quantity": int(quantity),
         "visible": visible
     }
     if modRank:
@@ -98,9 +98,8 @@ def deleteOrder(orderID):
     warframeApi.delete(f'{WFM_API}/profile/orders/{orderID}')
     
 def getOrders():
-    html_doc = warframeApi.get(f"https://warframe.market/profile/{config.inGameName}").text
-    soup = BeautifulSoup(html_doc, 'html.parser')
-    return json.loads(soup.find("script", {"id": "application-state"}).getText())["payload"]
+    r = warframeApi.get(f"https://api.warframe.market/vi/profile/{config.inGameName}/orders")
+    return r.json()["payload"]
 
 def updateListing(listing_id, platinum, quantity, visibility, itemName, order_type):
     try:

@@ -30,7 +30,7 @@ with open('settings.json') as file:
 
 # Extract values and initialize variables
 blacklistedItems = data['blacklistedItems']
-priceShiftThreshold = data['priceShfitThreshold']
+priceShiftThreshold = data['priceShiftThreshold']
 avgPriceCap = data['avgPriceCap']
 volumeThreshold = data['volumeThreshold']
 rangeThreshold = data['rangeThreshold']
