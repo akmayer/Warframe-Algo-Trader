@@ -98,7 +98,7 @@ def deleteOrder(orderID):
     warframeApi.delete(f'{WFM_API}/profile/orders/{orderID}')
     
 def getOrders():
-    r = warframeApi.get(f"https://api.warframe.market/vi/profile/{config.inGameName}/orders")
+    r = warframeApi.get(f"{WFM_API}/profile/{config.inGameName}/orders")
     return r.json()["payload"]
 
 def updateListing(listing_id, platinum, quantity, visibility, itemName, order_type):
