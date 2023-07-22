@@ -105,8 +105,8 @@ def updateListing(listing_id, platinum, quantity, visibility, itemName, order_ty
     try:
         url = WFM_API + "/profile/orders/" + listing_id
         contents = {
-            "platinum": platinum,
-            "quantity": quantity,
+            "platinum": int(platinum),
+            "quantity": int(quantity),
             "visible": visibility
         }
         response = warframeApi.put(url, json=contents)
