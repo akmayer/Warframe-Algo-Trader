@@ -32,5 +32,6 @@ with open('settings.json') as file:
 blacklistedItems = data['blacklistedItems']
 priceShiftThreshold = data['priceShiftThreshold']
 avgPriceCap = data['avgPriceCap']
+maxTotalPlatCap = data['maxTotalPlatCap']
 volumeThreshold = data['volumeThreshold']
 rangeThreshold = data['rangeThreshold']

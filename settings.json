@@ -4,6 +4,7 @@
     ],
     "priceShiftThreshold" : -1,
     "avgPriceCap" : 600,
+    "maxTotalPlatCap": 2000,
     "volumeThreshold" : 15,
     "rangeThreshold" : 10
 }

@@ -212,7 +212,17 @@ def restructureLiveOrderDF(liveOrderDF):
 
     return liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange
         
-
+def limit_max_plat_listings(priceRange):
+    currentOrders = getOrders()
+    totalPlat = 0
+    for order in currentOrders["buy_orders"]:
+        totalPlat += int(order["platinum"])
+    if totalPlat + priceRange > config.maxTotalPlatCap:
+        logging.debug(f"Max plat limit in total listings reached")
+        return True
+    else:
+        logging.debug(f"Item costs less than max plat limit")
+        return False
 
 def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory):
     orderType = "buy"
@@ -239,6 +249,8 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
     bestBuyer = liveBuyerDF.iloc[0]
     closedAvgMetric = itemStats["closedAvg"] - bestBuyer["platinum"]
     postPrice = bestBuyer["platinum"] + 1
+    if limit_max_plat_listings(postPrice):
+        return
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
