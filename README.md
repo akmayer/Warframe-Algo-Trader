@@ -33,7 +33,7 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 #### Steps:
 
-1. Initialize the configuration files by running `docker run --rm -v "$(pwd):/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux.
+1. Initialize the configuration files by running `docker run --rm -v ".:/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux.
 
 #### From source:
 
