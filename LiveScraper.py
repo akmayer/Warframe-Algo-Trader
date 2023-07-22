@@ -372,7 +372,7 @@ try:
             logging.debug(item.replace("_", " ").title() + f"(closedAvg: {round(itemStats['closedAvg'], 2)}):")
             liveOrderDF = getFilteredDF(item)
             if liveOrderDF.empty:
-                logging.warn("There was an error with seeing the live orders on this item.")
+                logging.debug("There was an error with seeing the live orders on this item.")
                 continue
             itemID = getItemId(item)
             modRank = getItemRank(buySellOverlap, item)
