@@ -2,7 +2,7 @@
     "blacklistedItems" : [
 
     ],
-    "priceShfitThreshold" : -1,
+    "priceShiftThreshold" : -1,
     "avgPriceCap" : 600,
     "volumeThreshold" : 15,
     "rangeThreshold" : 10
