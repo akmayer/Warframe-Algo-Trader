@@ -15,10 +15,7 @@ allItemsLink = "https://api.warframe.market/v1/items"
 r = requests.get(allItemsLink)
 itemList = r.json()["payload"]["items"]
 itemNameList = [x["url_name"] for x in itemList if "relic" not in x["url_name"]]
-
-f = open("statsScraping.log", 'w')
-f.write(f"Max Number Of Items: {len(itemNameList)}\n")
-f.close()
+urlLookup = {x["item_name"] : x["url_name"] for x in itemList}
 
 csvFileName = "allItemData.csv"
 
@@ -30,102 +27,77 @@ except FileExistsError:
     config.setConfigStatus("runningStatisticsScraper", False)
     raise Exception("Remove the backup or the main csv file, one shouldn't be there for this to run.")
 
-day = datetime.now() - timedelta(1)
-dayStr = datetime.strftime(day, '%Y-%m-%d')
-print(dayStr)
-daysBack = 7
+import pandas as pd
+import numpy as np
 
-f = open(csvFileName, "w")
-f.write("name,datetime,order_type,volume,min_price,max_price,range,median,avg_price,mod_rank\n")
-f.close()
 
-itemsParsed = 0
+def isFullData(data):
+    if len(data) == 0:
+        return False
+    if "mod_rank" in data[0].keys() and len(data) == 6:
+        return True
+    if "mod_rank" not in data[0].keys() and len(data) == 3:
+        return True
+    return False
 
-for i, item in enumerate(tqdm(sorted(itemNameList))):
-    if not config.getConfigStatus("runningStatisticsScraper"):
-        break
-    headers = {
-        'Content-Type': 'application/json',
-        'accept': 'application/json',
-        "platform" : config.platform
-    }
-    t = time.time()
-    r = requests.get(f"https://api.warframe.market/v1/items/{item}/statistics", headers=headers)
-    logging.debug(r)
-    if str(r.status_code)[0] != "2":
-        continue
+def getDataLink(dayStr):
+    if config.platform != "pc":
+        return f"https://relics.run/history/{config.platform}/price_history_{dayStr}.json"
+    else:
+        return f"https://relics.run/history/price_history_{dayStr}.json"
 
-    itemsParsed += 1
-
-    time.sleep(4)
-    itemData = r.json()
-    itemDataList = itemData["payload"]["statistics_live"]['90days']
-    closedItemDataList = itemData["payload"]["statistics_closed"]['90days']
-    closedItemDataList = list(reversed(closedItemDataList))
-    itemDataList = list(reversed(itemDataList))
-    
+def getDayStr(daysBack):
     day = datetime.now() - timedelta(daysBack)
     dayStr = datetime.strftime(day, '%Y-%m-%d')
-    
-    today = datetime.strftime(datetime.now(), '%Y-%m-%d')
-    
-    df = pd.DataFrame.from_dict(closedItemDataList)
-    
-    try:
-        df = df[(df.get("datetime") > dayStr) & (df.get("datetime") < today)]
-        #display(df)
-    except:
-        continue
-    
-    if "mod_rank" in df.columns:
-        df = df[df.get("mod_rank") > 0]
-    else:
-        df["mod_rank"] = np.nan
-    
-    if (df.shape[0] != 7):
-        continue
-    
-    df["name"] = item
-    df["order_type"] = "closed"
-    df["range"] = df["max_price"] - df["min_price"]
-    df = df[["name", "datetime", "order_type", "volume", "min_price", "max_price","range", "median", "avg_price", "mod_rank"]]
-    #display(df)
-    
-    df.to_csv(csvFileName, mode='a', index=False, header=False)
-    
-    df = pd.DataFrame.from_dict(itemDataList)
-    try:
-        df = df[(df.get("datetime") > dayStr) & (df.get("datetime") < today)]
-    except:
-        continue
+    return dayStr
 
-    if "mod_rank" in df.columns:
-        df = df[df.get("mod_rank") > 0]
-    else:
-        df["mod_rank"] = np.nan
-    
-    if (df.shape[0] != 14):
+lastSevenDays = [getDayStr(x) for x in range(1, 9)]
+print(lastSevenDays)
+
+df = pd.DataFrame()
+
+foundData = 0
+for dayStr in tqdm(lastSevenDays):
+    link = getDataLink(dayStr)
+    r = requests.get(link)
+    if str(r.status_code)[0] != "2" or foundData >= 7:
         continue
+    foundData += 1
+    for name, data in r.json().items():
+        if isFullData(data):
+            #print(name)
+            #print(len(data))
+            itemDF = pd.DataFrame.from_dict(data)
+            #display(itemDF)
+            try:
+                itemDF = itemDF.drop(["open_price", "closed_price", "donch_top", "donch_bot"], axis=1)
+                itemDF = itemDF.fillna({"order_type" : "closed"})
+                itemDF["name"] = urlLookup[name]
+                itemDF["range"] = itemDF["max_price"] - itemDF["min_price"]
+                if "mod_rank" not in itemDF.columns:
+                    itemDF["mod_rank"] = np.nan
+                else:
+                    itemDF = itemDF[itemDF["mod_rank"] != 0]
+                #display(itemDF)
+                
+                itemDF = itemDF[["name", "datetime", "order_type", "volume", "min_price", "max_price","range", "median", "avg_price", "mod_rank"]]
+                
+                df = pd.concat([df, itemDF])
+            except KeyError:
+                pass
     
-    df["name"] = item
-    df["range"] = df["max_price"] - df["min_price"]
-    df = df[["name", "datetime", "order_type", "volume", "min_price", "max_price","range", "median", "avg_price", "mod_rank"]]
-    #display(df)
-    
-    df.to_csv(csvFileName, mode='a', index=False, header=False)
-    
-    #f.close()
 
-f = open("statsScraping.log", 'a')
-f.write(f"Number of Items WFM Responded To Requests For: {itemsParsed}\n")
-f.close()
-
+countDF = df.groupby("name").count().reset_index()
+popularItems = countDF[countDF["datetime"] == 21]["name"]
+df = df[df["name"].isin(popularItems)]
+df = df.sort_values(by="name")
 itemListDF = pd.DataFrame.from_dict(itemList)
 #itemListDF
-df = pd.read_csv("allItemData.csv")
 #df = df.drop("Unnamed: 0", axis=1)
 df["item_id"] = df.apply(lambda row : itemListDF[itemListDF["url_name"] == row["name"]].reset_index().loc[0, "id"], axis=1)
-#df
+df["order_type"] = df.get("order_type").str.lower()
 df.to_csv("allItemData.csv", index=False)
+
+os.remove("allItemDataBackup.csv")
 
 config.setConfigStatus("runningStatisticsScraper", False)
