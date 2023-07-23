@@ -23,6 +23,7 @@ class WarframeLogParser:
         result = re.search(r'(F)(.*\S)( to index (?:[1-9]|[1-9]\d)$)', line)
         if result is not None:
             username = self.clean_username(result.group(2))
+            logging.debug(username)
             print(username)
             SelfTexting.send_push("WFTrade", f"Whisper(s) from {username}")
 

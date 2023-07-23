@@ -238,7 +238,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
 
     bestBuyer = liveBuyerDF.iloc[0]
     closedAvgMetric = itemStats["closedAvg"] - bestBuyer["platinum"]
-    postPrice = bestBuyer["platinum"] + 1
+    postPrice = bestBuyer["platinum"]
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
@@ -247,8 +247,6 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
         return
     
     if (closedAvgMetric >= 30 and priceRange >= 15) or priceRange >= 21 or closedAvgMetric >= 35:
-        if (closedAvgMetric == 30 and priceRange == 15) or priceRange == 21 or closedAvgMetric == 35:
-            postPrice -= 1
         if myOrderActive:
             if (myPlatPrice != (postPrice)):
                 logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
@@ -298,7 +296,7 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
             return
     bestSeller = liveSellerDF.iloc[0]
     closedAvgMetric = bestSeller["platinum"] - itemStats["closedAvg"]
-    postPrice = bestSeller['platinum'] - 1
+    postPrice = bestSeller['platinum']
     inventory = inventory[inventory.get("name") == item].reset_index()
     
 
@@ -306,7 +304,7 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         SelfTexting.send_push("EMERGENCY", f"The price of {item} is probably dropping and you should sell this to minimize losses asap")
 
     if avgCost + 10 > postPrice and numSellers >= 2:
-        postPrice = max([avgCost + 10, liveSellerDF.iloc[1]['platinum']-1])
+        postPrice = max([avgCost + 10, liveSellerDF.iloc[1]['platinum']])
     else:
         postPrice = max([avgCost + 10, postPrice])
         
