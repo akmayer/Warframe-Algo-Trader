@@ -23,46 +23,52 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 ### Initialization
 
-#### Docker:
+You can currently build this programs two ways. The recommended way is through Docker which will be 2 lines in a cmd prompt, creating a containerized version of the app that's simple to run. The other way is through manually installing the depenencies on your pc and running it from the source code.
+
+#### Method A. Docker:
 
 > A limitation of running this project with Docker is that you will be unable to utilize OCR for detecting when you've received an in-game message.
 
-##### Requirements:
+##### A. Requirements:
 
 - [Docker](https://docs.docker.com/get-docker/)
 
-#### Steps:
+#### A. Steps:
 
-1. Initialize the configuration files by running `docker run --rm -v ".:/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux.
+1. Initialize the configuration files by running `docker run --rm -v ".:/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux. If this fails on windows because you are not in the docker-users group, see [this](https://stackoverflow.com/questions/61530874/docker-how-do-i-add-myself-to-the-docker-users-group-on-windows) stack overflow post.
+2. Continue straight to [Setup](https://github.com/akmayer/Warframe-Algo-Trader/tree/main#setup)
 
-#### From source:
+#### Method B. From source:
 
 > IF YOU'RE COMPLETELY UNFAMILIAR WITH THE COMMAND LINE AND PYTHON, CHECK OUT THIS GUIDE FIRST: https://rentry.co/wfmalgotraderbasic2
 > (To be honest the guide is very well written I would recommend checking it out anyway)
 
-##### Requirements:
+##### B. Requirements:
 
-- Python 3 (Programmed in Python3.11, would probably work with earlier versions but haven't tested)
+- Python 3.11. Some earlier versions of Python 3 do not like some of the newer syntax I used in the API, so make sure you have the latest version of Python.
 - Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
 - Pushbullet (Only necessary for any phone notifications)
 - Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
 
-##### Steps:
+##### B. Steps:
 
-1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
-2. Run `pip install uvicorn`.
-3. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
-4. `cd ../` to return to the top level of the project.
-5. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
+> Note: The following steps are executed through the command line for installation from source.
+
+1. `cd` to the project directory, which will be `Warframe-Algo-Trader` if you downloaded with a git clone, and `Warframe-Algo-Trader-main` if you downloaded from a zip file.
+2. Run `pip install -r requirements.txt`.
+3. Run `pip install uvicorn`.
+4. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
+5. `cd ../` to return to the top level of the project.
+6. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
 
 ### Setup
 
+> Note: These steps are not executed from the command line, you will need to open these json files with a text editor.
+
 1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
 2. Paste your platform into the `config.json` file with the key, "platform".
-3. Get your jwt token to access your warframe.market account with their api. To do this:
-   - Look at step 10 of this guide: https://rentry.co/wfmalgotraderbasic2
+3. Get your jwt token to access your warframe.market account with their api. To do this, see this [guide](https://github.com/NKN1396/warframe.market-api-example)
 
-![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/11c7d918-8e63-4412-a556-1364c49d519f)
 
 **Steps below are only required for pushbullet mobile notifications:**
 
@@ -74,13 +80,13 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 ### Running
 
-#### Docker
+#### Method A) Docker
 
 Running `docker compose up --build` will start two containers, one for the python app, running on port `8000` and the other running the web UI, running on port `3000`.
 
 ![image](https://user-images.githubusercontent.com/23193271/254992499-82d408e6-0a4f-4dcf-909b-f95d31e268a6.png)
 
-#### From source
+#### Method B) From source
 
 If you are on windows, you can navigate to the top level of the project and run `startAll.bat`. The application is a locally hosted website at 127.0.0.1:3000, which you can open in a browser. If you want to see the api, that's hosted at 127.0.0.1:8000.
 
@@ -92,7 +98,7 @@ If you are not on windows, then in the top level, run `uvicorn inventoryApi:app 
 
 ![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/e5b2c27a-28ae-4f81-887c-978fe3ef36ff)
 
-The first button, that will start out looking like "Stats Reader Status: Not running" starts to gather 7 days of data on every item on warframe.market (slowly, no more than 3 api calls a second as to not overload their systems and to comply with their TOS). This data is saved to allItemData.csv and takes multiple hours to complete to avoid burdening the warframe.market servers. Thus, I would only recommend clicking this button once a day at most, possibly before you go to sleep, since you don't need this data to be updating constantly. **You NEED to let this run to completion before the rest of the program will work fully, but don't worry, it's not too resource intensive so you can do other things while you wait :) Plus this program is about the long consistent gains, it doesn't have to be todays.**
+The first button, that will start out looking like "Stats Reader Status: Not running" starts to gather 7 days of data on every item on warframe.market. This takes about 2 minutes to run. **You NEED to let this run to completion before the rest of the program will work fully.**
 
 The second button uses that data to determine which items seem "interesting". Then, it will delete all the buy and sell orders on your account to replace with its suggested ones. It will go through the interesting items and put "buy" posts on warframe.market at a higher price than any one else, **if** it decide's it's a good time to do so based on the currnt live postings. You may have a lot of "buy" posts up so ensure that you have enough platinum to honor people's messages to you. If you're technically inclined and know some python, you can fidget with the parameters in `LiveScraper.py` which can provide flexibility about which items you personally find interesting, or limit the number of total buy requests you can put up at once. The program will also put up "sell" orders automatically based on your inventory, but strictly higher than what you bought that item for on average, to ensure that the user is not at a loss by running this program. Leave this button on running in the background while you have trades available and have warframe open to be able to trade.
 
