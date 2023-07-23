@@ -35,7 +35,7 @@ You can currently build this programs two ways. The recommended way is through D
 
 #### A. Steps:
 
-1. Initialize the configuration files by running `docker run --rm -v ".:/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux.
+1. Initialize the configuration files by running `docker run --rm -v ".:/app" -w /app python:3.11-slim-bookworm python3 init.py` on Windows or `docker run --rm -v "$(pwd):/app" --user $(id -u):$(id -u) -w /app python:3.11-slim-bookworm python3 init.py` if you're on linux. If this fails on windows because you are not in the docker-users group, see [this](https://stackoverflow.com/questions/61530874/docker-how-do-i-add-myself-to-the-docker-users-group-on-windows) stack overflow post.
 2. Continue straight to [Setup](https://github.com/akmayer/Warframe-Algo-Trader/tree/main#setup)
 
 #### Method B. From source:
@@ -45,27 +45,30 @@ You can currently build this programs two ways. The recommended way is through D
 
 ##### B. Requirements:
 
-- Python 3 (Programmed in Python3.11, would probably work with earlier versions but haven't tested)
+- Python 3.11. Some earlier versions of Python 3 do not like some of the newer syntax I used in the API, so make sure you have the latest version of Python.
 - Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
 - Pushbullet (Only necessary for any phone notifications)
 - Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
 
 ##### B. Steps:
 
-1. In the project directory (probably Warframe-Algo-Trader), run `pip install -r requirements.txt`.
-2. Run `pip install uvicorn`.
-3. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
-4. `cd ../` to return to the top level of the project.
-5. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
+Note: The following steps are executed through the command line for installation from source.
+
+1. `cd` to the project directory, which will be `Warframe-Algo-Trader` if you downloaded with a git clone, and `Warframe-Algo-Trader-main` if you downloaded from a zip file.
+2. Run `pip install -r requirements.txt`.
+3. Run `pip install uvicorn`.
+4. `cd my-app` then run `npm install` to download the necessary packages. If this fails, first install npm then run it.
+5. `cd ../` to return to the top level of the project.
+6. Run `python init.py` to initialize the tables and config.json file which will store credentials to access various api's.
 
 ### Setup
 
+Note: These steps are not executed from the command line, you will need to open these json files with a text editor.
+
 1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
 2. Paste your platform into the `config.json` file with the key, "platform".
-3. Get your jwt token to access your warframe.market account with their api. To do this:
-   - Look at step 10 of this guide: https://rentry.co/wfmalgotraderbasic2
+3. Get your jwt token to access your warframe.market account with their api. To do this, see this [guide](https://github.com/NKN1396/warframe.market-api-example)
 
-![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/11c7d918-8e63-4412-a556-1364c49d519f)
 
 **Steps below are only required for pushbullet mobile notifications:**
 
