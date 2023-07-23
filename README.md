@@ -48,7 +48,7 @@ You can currently build this programs two ways. The recommended way is through D
 - Python 3.11. Some earlier versions of Python 3 do not like some of the newer syntax I used in the API, so make sure you have the latest version of Python.
 - Node.js for frontend and to use npm ([link](https://nodejs.org/en/download))
 - Pushbullet (Only necessary for any phone notifications)
-- Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))
+- ~~Tesseract-OCR (Only necessary for real time phone notifications [link](https://github.com/UB-Mannheim/tesseract/wiki))~~ (Tesseract Deprecated, moved to EE.log. Files still remain as proof of how cool it was)
 
 ##### B. Steps:
 
@@ -72,7 +72,7 @@ You can currently build this programs two ways. The recommended way is through D
 
 **Steps below are only required for pushbullet mobile notifications:**
 
-4. Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.
+4. ~~Install Tesseract-OCR from [their github](https://github.com/UB-Mannheim/tesseract/wiki). Either of the default installation paths should be fine but it should either end up in `C:Program Files\Tesseract-OCR` or in your `~\AppData\Local\Programs\Tesseract-OCR` where `~` is your user home directory.~~
 5. Install pushbullet on your phone. Additionally, on the Pushbullet website, login and add your phone as a device.
 6. After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
 7. Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
@@ -102,7 +102,9 @@ The first button, that will start out looking like "Stats Reader Status: Not run
 
 The second button uses that data to determine which items seem "interesting". Then, it will delete all the buy and sell orders on your account to replace with its suggested ones. It will go through the interesting items and put "buy" posts on warframe.market at a higher price than any one else, **if** it decide's it's a good time to do so based on the currnt live postings. You may have a lot of "buy" posts up so ensure that you have enough platinum to honor people's messages to you. If you're technically inclined and know some python, you can fidget with the parameters in `LiveScraper.py` which can provide flexibility about which items you personally find interesting, or limit the number of total buy requests you can put up at once. The program will also put up "sell" orders automatically based on your inventory, but strictly higher than what you bought that item for on average, to ensure that the user is not at a loss by running this program. Leave this button on running in the background while you have trades available and have warframe open to be able to trade.
 
-The third button combines pyautogui with OCR to detect when you receive whispers and send a notification to your phone when you do. Leave this on at the same time as the second button if you plan on doing other things while you let the whispers come to you and the notifactions let you respond quickly.
+The third button ~~combines pyautogui with OCR to detect when you receive whispers and send a notification to your phone when you do. Leave this on at the same time as the second button if you plan on doing other things while you let the whispers come to you and the notifactions let you respond quickly.~~ checks the EE.log for new whispers appearing and notifies your phone based on that
+
+Skip to [Inventory Manager](https://github.com/akmayer/Warframe-Algo-Trader/tree/main#inventory-manager), ignore the rest of this note about ocr below.
 
 **A note about OCR and phone notifications:**
 
