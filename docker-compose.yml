@@ -9,6 +9,7 @@ services:
     container_name: warframe-algo-trader-python-app
     volumes:
       - .:/app
+      - $APPDATA/../Local/Warframe:/appdata_warframe  # Use the environment variable for the volume mount
     ports:
       - 8000:8000
     restart: on-failure
