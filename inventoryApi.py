@@ -383,8 +383,8 @@ def start_screen_reader():
     if config.getConfigStatus("runningWarframeScreenDetect"):
         return {"Executed" : False, "Reason" : "Scraper already running"}
     else:
-        screenReaderProcess = subprocess.Popen(["python", "AutoScanWarframe.py"])
         config.setConfigStatus("runningWarframeScreenDetect", True)
+        screenReaderProcess = subprocess.Popen(["python", "EEParser.py"])
         return {"Executed": True}
 
 @app.post("/screen_reader/stop")
