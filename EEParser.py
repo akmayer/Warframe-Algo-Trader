@@ -1,7 +1,12 @@
 import os
 import re
 import SelfTexting
+import config
 from time import sleep
+
+import logging
+logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
+
 
 class WarframeLogParser:
     def __init__(self, log_path):
@@ -15,17 +20,18 @@ class WarframeLogParser:
         # Adding tab with channel name: FAlextremeYT to index 10
         # This line fits all our criteria, it gets called when you receive a new whisper from someone,
         # the username is in cleartext, and any tabs with an index of 6 or above are reserved for usernames so no false alarms from other chat windows.
-        result = re.search(r'(F)(.*\S)( to index (?:[6-9]|[1-9]\d)$)', line)
+        result = re.search(r'(F)(.*\S)( to index (?:[1-9]|[1-9]\d)$)', line)
         if result is not None:
             username = self.clean_username(result.group(2))
+            logging.debug(username)
             print(username)
             SelfTexting.send_push("WFTrade", f"Whisper(s) from {username}")
 
     def follow_and_parse_log(self):
         with open(self.log_path, 'r', encoding='latin-1') as file:
             # Uncomment the line below if you want to start reading from the end of the file
-            # file.seek(0, os.SEEK_END)
-            while True:
+            file.seek(0, os.SEEK_END)
+            while config.getConfigStatus("runningWarframeScreenDetect"):
                 line = file.readline()
                 if line:
                     self.process_line(line)
@@ -34,6 +40,11 @@ class WarframeLogParser:
 
 # Example usage:
 if __name__ == "__main__":
-    log_path = os.getenv('LOCALAPPDATA') + r'/Warframe/EE.log'
+    appdata_path = '/appdata_warframe'
+    log_path = os.path.join(appdata_path, 'EE.log')
+    if not os.path.exists(log_path):
+        log_path = os.path.join(os.getenv('LOCALAPPDATA'), 'Warframe', 'EE.log')
+    logging.debug(log_path)
+    
     parser = WarframeLogParser(log_path)
     parser.follow_and_parse_log()
