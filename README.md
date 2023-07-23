@@ -52,7 +52,7 @@ You can currently build this programs two ways. The recommended way is through D
 
 ##### B. Steps:
 
-Note: The following steps are executed through the command line for installation from source.
+> Note: The following steps are executed through the command line for installation from source.
 
 1. `cd` to the project directory, which will be `Warframe-Algo-Trader` if you downloaded with a git clone, and `Warframe-Algo-Trader-main` if you downloaded from a zip file.
 2. Run `pip install -r requirements.txt`.
@@ -63,7 +63,7 @@ Note: The following steps are executed through the command line for installation
 
 ### Setup
 
-Note: These steps are not executed from the command line, you will need to open these json files with a text editor.
+> Note: These steps are not executed from the command line, you will need to open these json files with a text editor.
 
 1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
 2. Paste your platform into the `config.json` file with the key, "platform".
