@@ -27,9 +27,6 @@ except FileExistsError:
     config.setConfigStatus("runningStatisticsScraper", False)
     raise Exception("Remove the backup or the main csv file, one shouldn't be there for this to run.")
 
-import pandas as pd
-import numpy as np
-
 
 def isFullData(data):
     if len(data) == 0:
