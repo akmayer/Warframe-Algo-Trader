@@ -40,8 +40,12 @@ class WarframeLogParser:
 
 # Example usage:
 if __name__ == "__main__":
-    appdata_path = '/appdata_warframe'
-    log_path = os.path.join(appdata_path, 'EE.log')
+    try:
+        appdata_path = '/appdata_warframe'
+        log_path = os.path.join(appdata_path, 'EE.log')
+    except FileNotFoundError:
+        log_path = os.getenv('LOCALAPPDATA') + r'/Warframe/EE.log'
     logging.debug(log_path)
+    
     parser = WarframeLogParser(log_path)
     parser.follow_and_parse_log()
