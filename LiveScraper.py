@@ -211,19 +211,6 @@ def restructureLiveOrderDF(liveOrderDF):
         priceRange = highPrice - lowPrice
 
     return liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange
-        
-# def limit_max_plat_listings(myBuyOrdersDF, priceRange):
-    # for order in currentOrders["buy_orders"]:
-    #     totalPlat += int(order["platinum"])
-    # totalPlat = myBuyOrdersDF["platinum"].sum()
-
-    # if totalPlat + priceRange > config.maxTotalPlatCap:
-    #     logging.debug(f"Max plat limit in total listings reached")
-        
-    #     return True
-    # else:
-    #     logging.debug(f"Item costs less than max plat limit")
-    #     return False
 
 def knapsack(items, max_weight):
     n = len(items)
@@ -245,12 +232,21 @@ def knapsack(items, max_weight):
             selected_items.append(items[i - 1])
             w -= items[i - 1][0]
         else:
-            unselected_items.append(items[i - 1][2])  # Append the item name to the unselected_items list
+            unselected_items.append(items[i - 1])  # Append the item name to the unselected_items list
 
     return dp[n][max_weight], selected_items, unselected_items
 
-def get_new_buy_data(myBuyOrdersDF, response):
-    #need to get order data of the item as well
+def get_new_buy_data(myBuyOrdersDF, response, itemStats):
+    newBuyOrderDF = pd.DataFrame.from_dict(response["order"])
+    if newBuyOrderDF.shape[0] != 0:
+        newBuyOrderDF["url_name"] = newBuyOrderDF["item"]["url_name"]
+        newBuyOrderDF = newBuyOrderDF.iloc[0].to_frame().T
+        newBuyOrderDF["potential_profit"] = itemStats['closedAvg'] - newBuyOrderDF["platinum"]
+            
+    myBuyOrdersDF = pd.concat([newBuyOrderDF,myBuyOrdersDF], ignore_index=True, axis=0)
+    return myBuyOrdersDF
+
+
 
 def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory):
     orderType = "buy"
@@ -269,21 +265,17 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
             updateListing(myOrderID, postPrice, 1, str(visibility), item, "buy")
             return
         else:
-            response = postOrder(itemID, orderType, postPrice, 1, True, modRank, item)
-            response = response.json()["payload"]
+            postOrder(itemID, orderType, postPrice, 1, True, modRank, item)
+            logging.debug(f"AUTOMATICALLY POSTED VISIBLE {orderType.upper()} ORDER FOR {postPrice}")
             return
     elif numBuyers == 0:
         return
 
     bestBuyer = liveBuyerDF.iloc[0]
     closedAvgMetric = itemStats["closedAvg"] - bestBuyer["platinum"]
-<<<<<<< Updated upstream
     postPrice = bestBuyer["platinum"]
-=======
-    postPrice = bestBuyer["platinum"] + 1
     potentialProfit = closedAvgMetric - 1
 
->>>>>>> Stashed changes
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
@@ -297,7 +289,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
                 #need to edit such that updated listing does not exceed budget
                 logging.debug(f"AUTOMATICALLY UPDATED {orderType.upper()} ORDER FROM {myPlatPrice} TO {postPrice}")
                 updateListing(myOrderID, str(postPrice), 1, str(visibility), item, "buy")
-                return
+                myBuyOrdersDF.loc[myBuyOrdersDF["url_name"] == item,"platinum"] = postPrice
+                myBuyOrdersDF.loc[myBuyOrdersDF["url_name"] == item,"potential_profit"] = myBuyOrdersDF.loc[myBuyOrdersDF["url_name"] == item]["potential_profit"] - (postPrice - myPlatPrice)
+                return myBuyOrdersDF
             else:
                 logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
                 return
@@ -305,7 +299,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
             # if limit_max_plat_listings(myBuyOrdersDF, postPrice):
             #     return
 
-            # Convert DataFrame to a list of tuples (platinum, potential_profit, item_name)
+            # Convert DataFrame to a list of tuples (platinum, potential_profit, url_name, id)
             buyOrdersList = []
             if myBuyOrdersDF.shape[0] != 0:
                 buyOrdersList = list(myBuyOrdersDF[['platinum', 'potential_profit', 'url_name', 'id']].itertuples(index=False, name=None))
@@ -317,13 +311,19 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
             if item in selectedItemNames:
                 if unselectedBuyOrders:
                     unSelectedItemNames = [i[2] for i in unselectedBuyOrders]
-                    for unselectedItem in unSelectedItemNames:
-                        deleteOrder(unselectedItem[3])
-                        logging.debug(f"DELETED sell order for {unselectedItem[3]} since it is not as optimal")
+                    myBuyOrdersDF = myBuyOrdersDF[~(myBuyOrdersDF["url_name"].isin(unSelectedItemNames))]
 
-                postOrder(itemID, orderType, str(postPrice), str(1), True, modRank, item)
+                    for unselectedItem in unselectedBuyOrders:
+                        deleteOrder(unselectedItem[3])
+                        logging.debug(f"DELETED sell order for {unselectedItem[2]} since it is not as optimal")
+
+                response = postOrder(itemID, orderType, str(postPrice), str(1), True, modRank, item)
+                if response.status_code != 200:
+                    return
+                response = response.json()["payload"]
+                myBuyOrdersDF = get_new_buy_data(myBuyOrdersDF, response, itemStats)
                 logging.debug(f"AUTOMATICALLY POSTED VISIBLE {orderType.upper()} ORDER FOR {postPrice}")
-                return
+                return myBuyOrdersDF
             else:
                 logging.debug(f"Item is too expensive or less optimal than current listings")
                 return
@@ -424,7 +424,6 @@ try:
         if myBuyOrdersDF.shape[0] != 0:
             myBuyOrdersDF["url_name"] = myBuyOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
             myBuyOrdersDF["potential_profit"] = myBuyOrdersDF.apply(lambda row: int(buySellOverlap.loc[row["item"]["url_name"]]['closedAvg']) - row["platinum"] , axis=1)
-            myBuyOrdersDF = myBuyOrdersDF.sort_values(by="potential_profit", ascending=True)
 
         mySellOrdersDF = pd.DataFrame.from_dict(currentOrders["sell_orders"])
         if mySellOrdersDF.shape[0] != 0:
@@ -450,7 +449,9 @@ try:
             itemID = getItemId(item)
             modRank = getItemRank(buySellOverlap, item)
 
-            compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory)
+            newBuyOrderDf = compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory)
+            if isinstance(newBuyOrderDf, pd.DataFrame):
+                myBuyOrdersDF = newBuyOrderDf
             compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory)
             
             #compareLiveOrdersToData(item, liveOrderDF, "buy", itemStats, currentOrders, itemID, modRank, inventory)
