@@ -17,7 +17,8 @@ Warframe blends free-to-play mechanics with a premium currency system that is es
 
 Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of how this method remains profitable for the user along with a link to a discord server where you can discuss this program with me.
 
-<img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/cccd01ed-f5e3-49da-bba1-8447c66c32ff width="495" height="270">
+<img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/ef79875f-bfbb-435a-a248-e78d738ef059 width="495" height="270">
+
 
 ## How To Use
 
