@@ -85,4 +85,50 @@ const GraphGen: React.FC = () => {
     );
   };
 
+<<<<<<< Updated upstream
 export default GraphGen;
+=======
+  let imageElement = null;
+  if (imageLoaded) {
+    imageElement = <img className="mx-auto" src={imageUrl} alt="Graph" />;
+  }
+
+  return (
+    <div className="w-[36vw] m-auto items-center justify-center p-[1.5vw] rounded-[1vw] bg-grey-custom-light ">
+      <table className='w-[100%] '>
+        <tbody>
+          <tr className='leading-[1vw]'>
+            <td>
+              <input 
+                className="text-center inline w-[15vw] h-[1vw] py-[1vw] px-[2vw] mx-[0.1vw] mb-[0.1vw] text-[0.9vw] shadow-[inset_0_0px_0px_0.25vw] shadow-grey-custom-darkgreen border-blue-custom bg-black-custom border-[0.1vw] text-white-custom"
+                type="text" 
+                id="startDate" 
+                placeholder='YYYY-MM-DD'
+                value={startDate} 
+                onChange={handleStartDateChange} />
+            </td>
+            <td>
+              <input 
+                className="text-center inline w-[15vw] h-[1vw] py-[1vw] px-[2vw] mx-[0.1vw] mb-[0.1vw] text-[0.9vw] shadow-[inset_0_0px_0px_0.25vw] shadow-grey-custom-darkgreen border-blue-custom bg-black-custom border-[0.1vw] text-white-custom"
+                type="text" 
+                id="endDate" 
+                placeholder='YYYY-MM-DD'
+                value={endDate} 
+                onChange={handleEndDateChange} />
+            </td>
+          </tr>
+          <tr className='leading-[1vw]'>
+            <td><label htmlFor="startDate" className='inline-block align-bottom text-[0.7vw] text-center text-white-custom/30'>Start Date</label></td>
+            <td><label htmlFor="endDate" className='inline-block align-bottom text-[0.7vw] text-center text-white-custom/30'>End Date</label></td>
+          </tr>
+        </tbody>
+      </table>
+      <button className="py-[0.3vw] px-[0.5vw] w-[6vw] h-[2vw] mb-[1vw] bg-blue-custom-light text-black-custom-text text-[0.9vw] hover:bg-blue-custom-highlight transition duration-500"  onClick={handleButtonClick}>Load Graph</button>
+      
+      {imageElement}
+    </div>
+  );
+};
+
+export default GraphGen;
+>>>>>>> Stashed changes

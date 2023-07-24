@@ -52,6 +52,7 @@ export default function Home() {
   }, []);
 
   return (
+<<<<<<< Updated upstream
       <div className="flex h-full min-h-screen text-grey-custom bg-grey-custom-green bg-cover bg-center ">
         <Clock />
         <div className="w-[50vw] text-center items-center p-[5vw] justify-center self-center">
@@ -88,3 +89,41 @@ export default function Home() {
       </div>
   )
 }
+=======
+    <div className="flex h-full min-h-screen text-grey-custom bg-grey-custom-green bg-cover bg-center ">
+      <Clock />
+      <div className="w-[50vw] text-center items-center p-[5vw] justify-center self-center">
+
+        
+        
+        <h1 className="text-center font-semibold pb-[1vw] text-[2vw]">
+          Inventory Manager
+        </h1>
+        <BuyBlock />
+        
+        <RowDisplay />
+        
+        <div className="text-left p-[1vw] m-auto rounded-[1vw] bg-grey-custom-light w-[36vw] text-[0.8vw]">
+          Total Purchase Price: {itemTotals.total_purchase_price}<br />
+          Total Listed Price: {itemTotals.total_listed_price}
+        </div>
+        
+      </div>
+      <div className="w-[50vw] text-center items-center p-[5vw] justify-center self-center">
+        <h1 className="text-center font-semibold pb-[1vw] text-[2vw]">
+          Transaction Control
+        </h1>
+        <div className="flex flex-row justify-center p-[1vw] rounded-[1vw] bg-grey-custom-light text-[0.9vw]">
+          <StatsScraperButton />
+          <LiveScraperButton />
+          <ScreenReaderButton />
+        </div>
+        <h1 className="text-center font-semibold pt-[1vw] pb-[1vw] text-[2vw]">
+          Visualizations
+        </h1>
+        <GraphGen />
+      </div>
+    </div>
+  )
+}
+>>>>>>> Stashed changes
