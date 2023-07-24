@@ -28,10 +28,7 @@ module.exports = {
         'red-custom' : '#a52f31',
         'red-custom-highlight' : '#ff6969',
         'green-custom-light' : '#1bb194',
-<<<<<<< Updated upstream
         
-=======
->>>>>>> Stashed changes
       },
       
       backgroundImage: {
