@@ -1,31 +1,29 @@
-import { environment } from "@/environment";
 import { useState } from "react";
 import { useEffect } from "react";
-
 interface Row {
-  id: number;
-  name: string;
-  purchasePrice: number;
-  listedPrice: number;
-  number: number;
-}
-
+    id: number;
+    name: string;
+    purchasePrice: number;
+    listedPrice: number;
+    number: number;
+  }
+  
 export default function RowDisplay() {
-  const [rows, setRows] = useState<Row[]>([]);
+  const [rows, setRows] = useState([]);
   const [inProg, setInProg] = useState("");
 
   useEffect(() => {
     // Fetch data from the REST API
     const interval = setInterval(() => {
       console.log("ping");
-      fetch(`${environment.API_BASE_URL}/items`)
+      fetch("http://127.0.0.1:8000/items")
         .then((response) => response.json())
         .then((data) => setRows(data))
         .catch((error) => console.log(error));
     }, 1000); // Update every second
 
     console.log("In useEffect");
-    fetch(`${environment.API_BASE_URL}/items`)
+    fetch("http://127.0.0.1:8000/items")
       .then((response) => response.json())
       .then((data) => setRows(data))
       .catch((error) => console.log(error));
@@ -36,18 +34,19 @@ export default function RowDisplay() {
   }, []);
 
   const handleButtonClick = (
-    itemName: string,
-    purchasePrice: number,
-    listedPrice: number,
-    number: number,
-    price: string,
-    buttonId: string
+    itemName,
+    purchasePrice,
+    listedPrice,
+    number,
+    price,
+    buttonId
   ) => {
+
     if (price.trim() === "") {
       // Do nothing if the price is not entered
       return;
     }
-
+    
     const updatedNumber = number - 1;
     setInProg("IN PROGRESS");
 
@@ -65,10 +64,10 @@ export default function RowDisplay() {
       price: parseFloat(price),
     };
     // Disable the button
-    (document.getElementById(buttonId) as HTMLButtonElement)!.disabled = true;
+    document.getElementById(buttonId).disabled = true;
 
     // Trigger PUT API call to "/market/{item_name}"
-    fetch(`${environment.API_BASE_URL}/market/${itemName}`, {
+    fetch(`http://127.0.0.1:8000/market/${itemName}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +81,7 @@ export default function RowDisplay() {
         setInProg("");
 
         // After the PUT API call to "/market/{item_name}" is completed, trigger the POST API call to "/transaction/"
-        fetch(`${environment.API_BASE_URL}/transaction/`, {
+        fetch(`http://127.0.0.1:8000/transaction/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -95,7 +94,7 @@ export default function RowDisplay() {
             console.log(transactionResponseData);
 
             // After the POST API call to "/transaction/" is completed, trigger the GET API call to "/item"
-            fetch(`${environment.API_BASE_URL}/item/sell`, {
+            fetch(`http://127.0.0.1:8000/item/sell`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -108,13 +107,11 @@ export default function RowDisplay() {
                 console.log(itemResponseData);
 
                 // After the PUT API call to "/item" is completed, trigger the GET API call to "/items"
-                fetch(`${environment.API_BASE_URL}/items`)
+                fetch("http://127.0.0.1:8000/items")
                   .then((response) => response.json())
                   .then((data) => {
                     setRows(data);
-                    (document.getElementById(
-                      buttonId
-                    ) as HTMLButtonElement)!.disabled = false;
+                    document.getElementById(buttonId).disabled = false;
                   })
                   .catch((error) => console.log(error));
               })
@@ -126,15 +123,15 @@ export default function RowDisplay() {
   };
 
   return (
-    <div className="items-center justify-center p-8 pb-12 rounded-lg bg-black-custom shadow-lg shadow-slate-400">
-      <h1 className="pb-4 text-lg">Inventory:</h1>
+    <div className="items-center justify-center p-[1.5vw] w-[36vw] m-auto rounded-[1vw] bg-grey-custom-light mb-[1.5vw]">
+      <h1 className="pb-[1vw] text-[1vw]">Inventory:</h1>
       <div className="w-full flex flex-col">
-        <div className="flex font-bold py-2">
-          <div className="w-2/6 px-4">Name:</div>
-          <div className="w-1/6 px-4">Avg Purchase Price:</div>
-          <div className="w-1/6 px-4">Listed Price:</div>
-          <div className="w-1/6 px-4">Number Owned:</div>
-          <div className="w-1/6 px-4">Sell Price:</div>
+        <div className="flex font-bold py-[0.5vw] text-[0.8vw]">
+          <div className="w-2/6 px-[2vw]">Name:</div>
+          <div className="w-1/6 px-[2vw]">Avg Buy:</div>
+          <div className="w-1/6 px-[2vw]">Listed Price:</div>
+          <div className="w-1/6 px-[2vw]">Number Owned:</div>
+          <div className="w-1/6 px-[2vw]">Sell Price:</div>
         </div>
         {rows.map((row) => {
           const textBoxId = `textbox-${row.id}`;
@@ -142,18 +139,18 @@ export default function RowDisplay() {
           return (
             <div
               key={row.id}
-              className="flex items-center border-b border-gray-300 py-2"
+              className="flex text-[0.6vw] items-center border-b-[0.1vw] border-grey-custom py-[0.5vw]"
             >
-              <div className="w-2/6 px-4">{row.name}</div>
-              <div className="w-1/6 px-4">{row.purchasePrice}</div>
-              <div className="w-1/6 px-4">{row.listedPrice}</div>
-              <div className="w-1/6 px-4">{row.number}</div>
-              <div className="w-1/6 px-4">
-                <div className="min-w-[100px]">
+              <div className="w-2/6 px-[2vw]">{row.name}</div>
+              <div className="w-1/6 px-[2vw]">{row.purchasePrice}</div>
+              <div className="w-1/6 px-[2vw]">{row.listedPrice}</div>
+              <div className="w-1/6 px-[2vw]">{row.number}</div>
+              <div className="w-1/6 px-[2vw]">
+                <div className="min-w-[0.5vw]">
                   <input
                     type="text"
                     id={textBoxId}
-                    className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
+                    className="text-center py-[0.5vw] px-[1vw] w-[2vw] shadow-[inset_0_0px_0px_0.25vw] border-[0.1vw] shadow-grey-custom-darkgreen border-blue-custom bg-black-custom text-white-custom"
                   />
                   <button
                     onClick={() =>
@@ -162,13 +159,12 @@ export default function RowDisplay() {
                         row.purchasePrice,
                         row.listedPrice,
                         row.number,
-                        (document.getElementById(textBoxId) as HTMLInputElement)
-                          ?.value,
+                        document.getElementById(textBoxId).value,
                         buttonId
                       )
                     }
                     id={buttonId}
-                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                    className="py-[0.3vw] px-[0.5vw] bg-blue-custom-light text-black-custom-text text-[0.9vw] hover:bg-blue-custom-highlight transition duration-500"
                   >
                     Sell
                   </button>

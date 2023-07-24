@@ -1,12 +1,12 @@
-import { environment } from "@/environment";
 import { useState, useEffect } from "react";
+import config from "../../config.json";
 
 function ScreenReaderButton() {
   const [isRunning, setIsRunning] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${environment.API_BASE_URL}/screen_reader`);
+      const response = await fetch("http://127.0.0.1:8000/screen_reader");
       const data = await response.json();
       setIsRunning(data.Running);
     } catch (error) {
@@ -26,8 +26,8 @@ function ScreenReaderButton() {
 
   const handleButtonClick = () => {
     const apiUrl = isRunning
-      ? `${environment.API_BASE_URL}/screen_reader/stop`
-      : `${environment.API_BASE_URL}/screen_reader/start`;
+      ? "http://127.0.0.1:8000/screen_reader/stop"
+      : "http://127.0.0.1:8000/screen_reader/start";
 
     fetch(apiUrl, {
       method: "POST",
@@ -42,23 +42,19 @@ function ScreenReaderButton() {
       .catch((error) => console.log(error));
   };
 
-  return (
-    <div>
+  return(
+    <div className="p-[0.5vw]">
       <button
         className={
           isRunning
-            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
-            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+            ? "p-[0.5vw] rounded-[0.5vw] w-[6.5vw] h-[6.5vw] bg-transparent border-[0.1vw] border-green-custom-light text-green-custom-light transition delay-50 hover:bg-blue-custom-highlight hover:border-blue-custom-highlight"
+            : "p-[0.5vw] rounded-[0.5vw] w-[6.5vw] h-[6.5vw] bg-transparent border-[0.1vw] border-red-custom text-red-custom transition delay-50 hover:bg-red-custom-highlight hover:border-red-custom-highlight hover:text-black-custom-text "
         }
         onClick={handleButtonClick}
       >
-        {isRunning ? "Stop" : "Start"}
+        Screen Reader
       </button>
-      <span>
-        {isRunning
-          ? " - Screen Reader Status: Running"
-          : " - Screen Reader Status: Not running"}
-      </span>
+
     </div>
   );
 }
