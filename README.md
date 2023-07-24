@@ -17,7 +17,8 @@ Warframe blends free-to-play mechanics with a premium currency system that is es
 
 Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of how this method remains profitable for the user along with a link to a discord server where you can discuss this program with me.
 
-<img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/cccd01ed-f5e3-49da-bba1-8447c66c32ff width="495" height="270">
+<img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/ef79875f-bfbb-435a-a248-e78d738ef059 width="495" height="270">
+
 
 ## How To Use
 
@@ -67,7 +68,9 @@ You can currently build this programs two ways. The recommended way is through D
 
 1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
 2. Paste your platform into the `config.json` file with the key, "platform".
-3. Get your jwt token to access your warframe.market account with their api. To do this, see this [guide](https://github.com/NKN1396/warframe.market-api-example)
+3. Get your jwt token to access your warframe.market account with their api. To do this, see this [guide](https://github.com/NKN1396/warframe.market-api-example).
+
+**The JWT token is structured like "JWT eraydsfhalefibnzsdlfi". It includes the letters, "JWT" as well as a space before all the seemingly random characters.**
 
 
 **Steps below are only required for pushbullet mobile notifications:**
