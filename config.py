@@ -24,7 +24,7 @@ pushbutton_device_iden = configData["pushbutton_device_iden"]
 jwt_token = configData["wfm_jwt_token"]
 jwt_token = "JWT " + jwt_token.split(" ")[-1]
 inGameName = configData['inGameName']
-platform = configData['platform']
+platform = configData['platform'].lower()
 # Read JSON file
 with open('settings.json') as file:
     data = json.load(file)
