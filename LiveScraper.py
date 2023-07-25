@@ -326,6 +326,12 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         return
 
 
+r = postOrder("56783f24cbfa8f0432dd89a2", "buy", 1, 1, str(False), None, "lex_prime_set")
+if r.status_code == 401:
+    config.setConfigStatus("runningLiveScraper", False)
+    raise Exception(f"Invalid JWT Token")
+
+
 deleteAllOrders()
 interestingItems = list(buySellOverlap.index)
 
