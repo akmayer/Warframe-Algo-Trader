@@ -67,7 +67,6 @@ def getBuySellOverlap():
         ).set_index("name")
     dfFilter["weekPriceShift"] = dfFilter.apply(getWeekIncrease, axis=1)
     dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames))]
-        
     names = dfFilter["name"].unique()
 
     dfFiltered = averaged_df[averaged_df["name"].isin(names)]
@@ -424,7 +423,7 @@ try:
         if myBuyOrdersDF.shape[0] != 0:
             myBuyOrdersDF["url_name"] = myBuyOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
             myBuyOrdersDF = myBuyOrdersDF[myBuyOrdersDF["url_name"].isin(interestingItems)]
-            myBuyOrdersDF["potential_profit"] = myBuyOrdersDF.apply(lambda row: int(buySellOverlap.loc[row["item"]["url_name"]]['closedAvg']) - row["platinum"] , axis=1)
+            myBuyOrdersDF["potential_profit"] = myBuyOrdersDF.apply(lambda row: int(buySellOverlap.loc[row["item"]["url_name"], 'closedAvg']) - row["platinum"] , axis=1)
 
         mySellOrdersDF = pd.DataFrame.from_dict(currentOrders["sell_orders"])
         if mySellOrdersDF.shape[0] != 0:
