@@ -16,8 +16,7 @@ class WarframeApi:
             "platform": config.platform,
             "language": "en",
             "Authorization": self.jwt_token,
-            # TODO: Include version number in the user agent
-            'User-Agent': 'Warframe Algo Trader',
+            'User-Agent': 'Warframe Algo Trader/1.2.1',
         }
         self.lastRequestTime = 0
         self.timeBetweenRequests = 3
@@ -119,3 +118,13 @@ def updateListing(listing_id, platinum, quantity, visibility, itemName, order_ty
     except requests.exceptions.RequestException as e:
         print(f"update_listing: {e}")
         return False
+    
+if __name__ == "__main__":
+    warframeApi.post({
+        "item": "5bc1ab93b919f200c18c10ef",
+        "platinum": 1,
+        "order_type": "buy",
+        "quantity": 1,
+        "rank": 1,
+        "visible": False
+    })

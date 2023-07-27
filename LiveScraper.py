@@ -225,6 +225,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
     bestSeller = liveSellerDF.iloc[0]
     if numBuyers == 0 and itemStats["closedAvg"] > 25:
         postPrice = max([priceRange-40, int(priceRange / 3) - 1])
+        if postPrice > int(config.avgPriceCap):
+            logging.debug("This item is higher than the price cap you set.")
+            return
         if postPrice < 1:
             postPrice = 1
         if myOrderActive:
@@ -239,6 +242,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
     bestBuyer = liveBuyerDF.iloc[0]
     closedAvgMetric = itemStats["closedAvg"] - bestBuyer["platinum"]
     postPrice = bestBuyer["platinum"]
+    if postPrice > int(config.avgPriceCap):
+        logging.debug("This item is higher than the price cap you set.")
+        return
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
@@ -253,6 +259,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, ite
                 updateListing(myOrderID, str(postPrice), 1, str(visibility), item, "buy")
                 return
             else:
+                updateListing(myOrderID, str(postPrice), 1, str(visibility), item, "buy")
                 logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
                 return
         else:
@@ -317,6 +324,7 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         
         else:
             updateDBPrice(item, int(myPlatPrice))
+            updateListing(myOrderID, str(int(postPrice)), 1, str(visibility), item, "sell")
             logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
             return
     else:
