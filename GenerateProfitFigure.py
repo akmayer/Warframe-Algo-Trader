@@ -4,25 +4,28 @@ import numpy as np
 import time
 import sys
 
+# Set a flag to ignore Loki Prime (if True) or include it (if False)
 ignoreLokiPrime = False
 
+# Set the ignoredSet based on the ignoreLokiPrime flag
 if ignoreLokiPrime:
     ignoredSet = set(['loki_prime_set'])
 else:
     ignoredSet = set([])
-    
+
+# Function to calculate the value of assets at a specific datetime (dt)
 def getValueOfAssets(dt, ignoredSet):
     # Connect to the SQLite database
     conn = sqlite3.connect('inventory.db')
     cursor = conn.cursor()
     
-    # Retrieve distinct names from the transactions table
-    cursor.execute("SELECT DISTINCT name FROM transactions where datetime <= ?", (dt, ))
+    # Get distinct names from the transactions table where datetime is before or equal to dt
+    cursor.execute("SELECT DISTINCT name FROM transactions WHERE datetime <= ?", (dt,))
     names = cursor.fetchall()
     
     value_of_assets = 0
     
-    # Check the buy-sell balance for each name
+    # Calculate the value of assets for each name
     for name in names:
         name = name[0]  # Extract the name from the tuple
         if name in ignoredSet:
@@ -32,10 +35,9 @@ def getValueOfAssets(dt, ignoredSet):
         cursor.execute("SELECT COUNT(*), avg(price) FROM transactions WHERE name = ? AND transactionType = 'buy' AND datetime <= ?", (name, dt))
         buy_count, avg_price = cursor.fetchone()
         num_owned = int(buy_count) - sell_count
-        if avg_price and (num_owned):
+        if avg_price and num_owned:
             value_of_assets += (avg_price - 0) * num_owned
         else:
-            #print(f"Never bought {name}")
             pass
     
     # Close the database connection
@@ -48,7 +50,7 @@ def getValueOfAssets2(dt, ignoredSet):
     conn = sqlite3.connect('inventory.db')
     cursor = conn.cursor()
 
-    # Retrieve distinct names, net count, and average price in a single query
+    # Retrieve aggregated data of name, net count, and average price for each name
     cursor.execute("""
         SELECT name, SUM(CASE WHEN transactionType = 'buy' THEN 1 ELSE -1 END), AVG(CASE WHEN transactionType = 'buy' THEN price ELSE NULL END)
         FROM transactions
@@ -62,7 +64,6 @@ def getValueOfAssets2(dt, ignoredSet):
 
     # Calculate the value of assets based on the retrieved data
     for name, num_owned, avg_price in rows:
-        #print(name, num_owned, avg_price)
         num_owned = int(num_owned)
         if avg_price and num_owned:
             value_of_assets += avg_price * num_owned
@@ -72,14 +73,15 @@ def getValueOfAssets2(dt, ignoredSet):
     return value_of_assets
     
 def extractDate(datetimeString):
+    # Extract only the date part from the datetime string
     return datetimeString.split(" ")[0]
 
-#the elemtns in dateTimeList are strings, not datetime objects, this way the trades are not spaced by 18 hrs of dead time per day.
 def genLabels(dateTimeList):
     labels = []
     lastDay = ""
     for datetimeStr in dateTimeList:
         date = extractDate(datetimeStr)
+        # Append the date to labels if it's a new day after the year 2021, otherwise append an empty string
         if lastDay != date and date > "2021":
             labels.append(date)
         else:
@@ -88,6 +90,7 @@ def genLabels(dateTimeList):
     return labels
 
 def getInventoryValueOverTime(startDate, endDate):
+    # Connect to the SQLite database
     conn = sqlite3.connect('inventory.db')
     cursor = conn.cursor()
     
@@ -102,13 +105,13 @@ def getInventoryValueOverTime(startDate, endDate):
     
     # Execute the query with the parameter tuple
     cursor.execute(query, params)
-    
     rows = cursor.fetchall()
     conn.close()
     
     timestamps = []
     valueOverTime = []
     
+    # Calculate the value of assets over time for each transaction
     for row in rows:
         id, date = row
         timestamps.append(date)
@@ -121,7 +124,6 @@ def getNetEarningsOverTime(startDate, endDate):
     conn = sqlite3.connect('inventory.db')
     cursor = conn.cursor()
     
-    # Retrieve data from the transactions table excluding specific values
     # Generate the placeholders for the elements in ignoredSet
     placeholders = ', '.join(['?' for _ in ignoredSet])
     
@@ -169,22 +171,23 @@ def getNetEarningsOverTime(startDate, endDate):
     return timestamps, earnings
 
 def getAccountValueFig(timestamps, inventoryValueOverTime, netEarnings):
+    # Configure plot styles
     plt.rcParams['text.color'] = '#E5ECF4'
     plt.rcParams['axes.labelcolor'] = '#E5ECF4'
     plt.rcParams['axes.edgecolor'] = '#E5ECF4'
     plt.rcParams['xtick.color'] = '#E5ECF4'
     plt.rcParams['ytick.color'] = '#E5ECF4'
     
-    # Create a black background
     plt.rcParams['figure.facecolor'] = '#0A090C'
     plt.rcParams['axes.facecolor'] = '#0A090C'
     
-    
+    # Prepare data for plotting
     x = timestamps
-    #print(x)
     y = np.array(netEarnings) + np.array(inventoryValueOverTime)
     labels = genLabels(timestamps)
-    plt.plot(x,y, '#8A4FFF')
+    
+    # Create the plot
+    plt.plot(x, y, '#8A4FFF')
     plt.xticks(x, labels, rotation=45)
     plt.title("Account Value Over Time")
     plt.ylabel("Liquid Platinum + Estimated Inventory Value")
@@ -197,18 +200,19 @@ def getAccountValueFig(timestamps, inventoryValueOverTime, netEarnings):
         spine.set_edgecolor('#E5ECF4')
     return fig
 
+# Get start and end dates from command line arguments
 startDate = sys.argv[1]
 endDate = sys.argv[2]
 
 print(startDate, endDate)
 
+# Calculate inventory value over time and net earnings over time
 t = time.time()
 timestamps, inventoryValueOverTime = getInventoryValueOverTime(startDate, endDate)
-#print(time.time() - t)
 t = time.time()
 timestamps, netEarningsOverTime = getNetEarningsOverTime(startDate, endDate)
-#print(time.time() - t)
 t = time.time()
+
+# Generate and save the account value plot
 fig = getAccountValueFig(timestamps, inventoryValueOverTime, netEarningsOverTime)
-#print(time.time() - t)
 fig.savefig("accValue.png")

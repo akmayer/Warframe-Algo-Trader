@@ -1,0 +1,10 @@
+{
+    "pushbutton_token": "",
+    "pushbutton_device_iden": "",
+    "wfm_jwt_token": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJaRUJKSzI1cmZMamRUanl1QldWWmRjRXJUWWdTSTJZViIsImNzcmZfdG9rZW4iOiI1NDhjNWNlOWRiMWE3OGE1ZjI1NmNhZTQ3ZmI1YTYzYmVjMGViNGIzIiwiZXhwIjoxNjk1NjU1ODQxLCJpYXQiOjE2OTA0NzE4NDEsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImxvZ2luX3VhIjoiYidNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTE1LjAuMC4wIFNhZmFyaS81MzcuMzYnIiwibG9naW5faXAiOiJiJzI2MDM6NjA4MTo0MTAwOjZkOjQxZGM6YzVlNzo3ZjhiOmMxZjEnIiwiand0X2lkZW50aXR5IjoiRWZxUmVMZ3RoaUptOXVmWnFCcHVReEVESGdEM3dXZkYifQ.CHyhFDbPA_c4hhM4E4gisf_uP52yNQf2LAkZvl0Fp04",
+    "inGameName": "ChrisValk",
+    "runningLiveScraper": true,
+    "runningStatisticsScraper": false,
+    "runningWarframeScreenDetect": false,
+    "platform": "PC"
+}

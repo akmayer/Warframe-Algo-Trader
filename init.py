@@ -2,8 +2,10 @@ import sqlite3
 import os
 import json
 
+# File creation and database connection
 filename = "inventory.db"
 
+# Check if the file exists; if not, create an empty file
 if not os.path.exists(filename):
     with open(filename, "w"):
         pass  # Creating an empty file
@@ -11,14 +13,11 @@ if not os.path.exists(filename):
 else:
     print(f"File '{filename}' already exists.")
 
+# Connect to the SQLite database
 con = sqlite3.connect('inventory.db')
 cur = con.cursor()
-# Connecting to the geeks database
- 
-# Creating a cursor object to execute
-# SQL queries on a database table
 
-# Table Definition
+# Create 'inventory' table if it doesn't exist
 cur.execute('''CREATE TABLE if not exists inventory(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -27,6 +26,7 @@ cur.execute('''CREATE TABLE if not exists inventory(
                 number INTEGER NOT NULL) STRICT;
                 ''')
 
+# Create 'transactions' table if it doesn't exist
 cur.execute("""
     CREATE TABLE IF NOT EXISTS transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,6 +38,7 @@ cur.execute("""
 """)
 con.close()
 
+# Configuration file handling
 filename = "config.json"
 config_data = {
     "pushbutton_token": "",
@@ -50,6 +51,7 @@ config_data = {
     "platform" : ""
 }
 
+# Check if the configuration file exists; if not, create it with default data
 if not os.path.exists(filename):
     with open(filename, "w") as file:
         json.dump(config_data, file, indent=4)
@@ -57,12 +59,11 @@ if not os.path.exists(filename):
 else:
     print(f"File '{filename}' already exists.")
 
-
+# Directory creation
 directory = "logs"
 
-# Check if the directory already exists
+# Check if the 'logs' directory exists; if not, create it
 if not os.path.exists(directory):
-    # If it doesn't exist, create it
     os.makedirs(directory)
     print(f"Directory '{directory}' created successfully.")
 else:
