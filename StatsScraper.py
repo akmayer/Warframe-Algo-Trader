@@ -105,7 +105,7 @@ itemListDF = pd.DataFrame.from_dict(itemList)
 #df = df.drop("Unnamed: 0", axis=1)
 df["item_id"] = df.apply(lambda row : itemListDF[itemListDF["url_name"] == row["name"]].reset_index().loc[0, "id"], axis=1)
 df["order_type"] = df.get("order_type").str.lower()
-df.to_csv("allItemData.csv", index=False)
+df.to_csv("allItemDataBackup.csv", index=False)
 
 # Save the scraped data to a CSV file
 try:
@@ -115,7 +115,7 @@ except Exception as e:
     logger.error(f"Failed to save data to CSV file: {e}")
 
 # Remove the backup CSV file and mark the script as not running in the configuration
-    os.remove("allItemDataBackup.csv")
-    config.setConfigStatus("runningStatisticsScraper", False)
+os.remove("allItemDataBackup.csv")
+config.setConfigStatus("runningStatisticsScraper", False)
 # End of the script
 logger.info("Script execution completed.")
