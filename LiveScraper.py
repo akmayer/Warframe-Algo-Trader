@@ -258,6 +258,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     bestSeller = liveSellerDF.iloc[0]
     if numBuyers == 0 and itemStats["closedAvg"] > 25:
         postPrice = max([priceRange-40, int(priceRange / 3) - 1])
+        if postPrice > int(config.avgPriceCap):
+            logging.debug("This item is higher than the price cap you set.")
+            return
         if postPrice < 1:
             postPrice = 1
         if myOrderActive:
@@ -275,6 +278,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     postPrice = bestBuyer["platinum"]
     potentialProfit = closedAvgMetric - 1
 
+    if postPrice > int(config.avgPriceCap):
+        logging.debug("This item is higher than the price cap you set.")
+        return
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
@@ -292,6 +298,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
                 myBuyOrdersDF.loc[myBuyOrdersDF["url_name"] == item,"potential_profit"] = myBuyOrdersDF.loc[myBuyOrdersDF["url_name"] == item]["potential_profit"] - (postPrice - myPlatPrice)
                 return myBuyOrdersDF
             else:
+                updateListing(myOrderID, str(postPrice), 1, str(visibility), item, "buy")
                 logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
                 return
         else:
@@ -384,6 +391,7 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         
         else:
             updateDBPrice(item, int(myPlatPrice))
+            updateListing(myOrderID, str(int(postPrice)), 1, str(visibility), item, "sell")
             logging.debug(f"Your current (possibly hidden) posting on this item for {myPlatPrice} plat is a good one. Recommend to make visible.")
             return
     else:
@@ -396,6 +404,12 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
 #     item_url_name = row["item"]["url_name"]
 #     item = buySellOverlap.loc[item_url_name]
 #     return row["platinum"] - overlap_platinum
+
+
+r = postOrder("56783f24cbfa8f0432dd89a2", "buy", 1, 1, str(False), None, "lex_prime_set")
+if r.status_code == 401:
+    config.setConfigStatus("runningLiveScraper", False)
+    raise Exception(f"Invalid JWT Token")
 
 
 deleteAllOrders()

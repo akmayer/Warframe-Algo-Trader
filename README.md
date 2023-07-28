@@ -68,6 +68,11 @@ You can currently build this programs two ways. The recommended way is through D
 
 1. After you have initialized the project, paste your in game name into the `config.json` file with the key, "inGameName".
 2. Paste your platform into the `config.json` file with the key, "platform".
+* "pc" if on pc
+* "ps4" if on ps4
+* "xbox" if on xbox
+* "switch" if on switch
+* Case Matters, should be in all lowercase.
 3. Get your jwt token to access your warframe.market account with their api. To do this, see this [guide](https://github.com/NKN1396/warframe.market-api-example).
 
 **The JWT token is structured like "JWT eraydsfhalefibnzsdlfi". It includes the letters, "JWT" as well as a space before all the seemingly random characters.**
