@@ -440,6 +440,7 @@ try:
         if myBuyOrdersDF.shape[0] != 0:
             myBuyOrdersDF["url_name"] = myBuyOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
             myBuyOrdersDF = myBuyOrdersDF[myBuyOrdersDF["url_name"].isin(interestingItems)]
+        if myBuyOrdersDF.shape[0] != 0:
             myBuyOrdersDF["potential_profit"] = myBuyOrdersDF.apply(lambda row: int(buySellOverlap.loc[row["item"]["url_name"], 'closedAvg']) - row["platinum"] , axis=1)
 
         mySellOrdersDF = pd.DataFrame.from_dict(currentOrders["sell_orders"])
