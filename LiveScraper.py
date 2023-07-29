@@ -248,6 +248,9 @@ def get_new_buy_data(myBuyOrdersDF, response, itemStats):
 
 
 def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory):
+    if ignoreItems(item):
+        logging.debug("Item Blacklisted.")
+        return
     orderType = "buy"
     myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
     liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
@@ -281,7 +284,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     if postPrice > int(config.avgPriceCap):
         logging.debug("This item is higher than the price cap you set.")
         return
-    if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum())) or ignoreItems(item)):
+    if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum()))):
         logging.debug("You're holding too many of this item! Not putting up a buy order.")
         if myOrderActive:
             logging.debug("In fact you have a buy order up for this item! Deleting it.")
