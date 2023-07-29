@@ -120,11 +120,14 @@ def updateListing(listing_id, platinum, quantity, visibility, itemName, order_ty
         return False
     
 if __name__ == "__main__":
-    warframeApi.post({
-        "item": "5bc1ab93b919f200c18c10ef",
-        "platinum": 1,
-        "order_type": "buy",
-        "quantity": 1,
-        "rank": 1,
-        "visible": False
-    })
+    warframeApi.post(
+        f'{WFM_API}/profile/orders',
+        {
+            "item": "5bc1ab93b919f200c18c10ef",
+            "platinum": 1,
+            "order_type": "buy",
+            "quantity": 1,
+            "rank": 1,
+            "visible": False
+        }
+    )
