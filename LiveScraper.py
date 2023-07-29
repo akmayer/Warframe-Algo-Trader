@@ -324,7 +324,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
 
                     for unselectedItem in unselectedBuyOrders:
                         deleteOrder(unselectedItem[3])
-                        logging.debug(f"DELETED sell order for {unselectedItem[2]} since it is not as optimal")
+                        logging.debug(f"DELETED BUY order for {unselectedItem[2]} since it is not as optimal")
 
                 response = postOrder(itemID, orderType, str(postPrice), str(1), True, modRank, item)
                 if response.status_code != 200:
