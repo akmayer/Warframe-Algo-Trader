@@ -120,7 +120,7 @@ def updateListing(listing_id, platinum, quantity, visibility, itemName, order_ty
         return False
     
 if __name__ == "__main__":
-    warframeApi.post(
+    r = warframeApi.post(
         f'{WFM_API}/profile/orders',
         {
             "item": "5bc1ab93b919f200c18c10ef",
@@ -131,3 +131,4 @@ if __name__ == "__main__":
             "visible": False
         }
     )
+    print(r.status_code)
