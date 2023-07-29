@@ -1,0 +1,10 @@
+{
+    "pushbutton_token": "",
+    "pushbutton_device_iden": "",
+    "wfm_jwt_token": "",
+    "inGameName": "",
+    "runningLiveScraper": false,
+    "runningStatisticsScraper": false,
+    "runningWarframeScreenDetect": false,
+    "platform": ""
+}
