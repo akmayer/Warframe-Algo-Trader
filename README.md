@@ -26,6 +26,8 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 You can currently build this programs two ways. The recommended way is through Docker which will be 2 lines in a cmd prompt, creating a containerized version of the app that's simple to run. The other way is through manually installing the depenencies on your pc and running it from the source code.
 
+If you would like a visual guide for reference, I have posted that here: https://www.youtube.com/watch?v=qzcvqm-ccR4
+
 #### Method A. Docker:
 
 > A limitation of running this project with Docker is that you will be unable to utilize OCR for detecting when you've received an in-game message.
