@@ -89,10 +89,13 @@ popularItems = countDF[countDF["datetime"] == 21]["name"]
 df = df[df["name"].isin(popularItems)]
 df = df.sort_values(by="name")
 itemListDF = pd.DataFrame.from_dict(itemList)
-#itemListDF
-#df = df.drop("Unnamed: 0", axis=1)
-df["item_id"] = df.apply(lambda row : itemListDF[itemListDF["url_name"] == row["name"]].reset_index().loc[0, "id"], axis=1)
-df["order_type"] = df.get("order_type").str.lower()
+
+# Create a correspondence dictionary between item names and their IDs
+item_name_to_id = {row["url_name"]: row["id"] for _, row in itemListDF.iterrows()}
+
+df["item_id"] = df["name"].map(item_name_to_id)
+
+df["order_type"] = df["order_type"].str.lower()
 df.to_csv("allItemData.csv", index=False)
 
 os.remove("allItemDataBackup.csv")
