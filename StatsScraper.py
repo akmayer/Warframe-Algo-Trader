@@ -44,7 +44,7 @@ def getDataLink(dayStr):
         return f"https://relics.run/history/price_history_{dayStr}.json"
 
 def getDayStr(daysBack):
-    day = datetime.now() - timedelta(daysBack)
+    day = datetime.utcnow() - timedelta(daysBack)
     dayStr = datetime.strftime(day, '%Y-%m-%d')
     return dayStr
 
