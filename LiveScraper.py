@@ -20,7 +20,8 @@ def getWeekIncrease(row):
         df = pd.read_csv("allItemDataBackup.csv")
     except FileNotFoundError:
         df = pd.read_csv("allItemData.csv")
-    weekDF = df[(df.get("name") == row["name"]) & (df.get("order_type") == "closed")].reset_index().drop("index", axis=1)
+    weekDF = pd.DataFrame(df[(df.get("name") == row["name"]) & (df.get("order_type") == "closed")]
+                         ).sort_values(by='datetime').reset_index().drop("index", axis=1)
     change = weekDF.loc[0, "avg_price"] - weekDF.loc[6, "avg_price"]
     return change
 
