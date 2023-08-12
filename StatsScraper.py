@@ -7,6 +7,7 @@ import numpy as np
 import time
 import config
 import logging
+from itertools import chain
 
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
@@ -48,12 +49,17 @@ def getDayStr(daysBack):
     dayStr = datetime.strftime(day, '%Y-%m-%d')
     return dayStr
 
+def fast_flatten(input_list):
+    return list(chain.from_iterable(input_list))
+
+
 lastSevenDays = [getDayStr(x) for x in range(1, 9)]
 print(lastSevenDays)
 
 df = pd.DataFrame()
 
 foundData = 0
+frames = []
 for dayStr in tqdm(lastSevenDays):
     link = getDataLink(dayStr)
     r = requests.get(link)
@@ -79,11 +85,21 @@ for dayStr in tqdm(lastSevenDays):
                 
                 itemDF = itemDF[["name", "datetime", "order_type", "volume", "min_price", "max_price","range", "median", "avg_price", "mod_rank"]]
                 
-                df = pd.concat([df, itemDF])
+                frames.append(itemDF)
             except KeyError:
                 pass
     
 
+COLUMN_NAMES = frames[0].columns
+df_dict = dict.fromkeys(COLUMN_NAMES, [])
+for col in COLUMN_NAMES:
+    extracted = (frame[col] for frame in frames)
+
+    # Flatten and save to df_dict
+    df_dict[col] = fast_flatten(extracted)
+df = pd.DataFrame.from_dict(df_dict)[COLUMN_NAMES]
+    
+    
 countDF = df.groupby("name").count().reset_index()
 popularItems = countDF[countDF["datetime"] == 21]["name"]
 df = df[df["name"].isin(popularItems)]
