@@ -2,14 +2,19 @@ import os
 from datetime import datetime
 logDir = "logs"
 
+def makeGitIgnore():
+    with open(os.path.join(logDir, ".gitignore"), "w") as gitignore:
+        gitignore.write("# Ignore everything in this directory\n*\n# Except this file\n!.gitignore")
+
 def verifyLogDir():
     if os.path.exists(os.path.join(logDir, ".gitignore")):
         return
     if os.path.exists(logDir):
+        makeGitIgnore()
         return
     os.mkdir(logDir)
-    with open(os.path.join(logDir, ".gitignore"), "w") as gitignore:
-        gitignore.write("# Ignore everything in this directory\n*\n# Except this file\n!.gitignore")
+    makeGitIgnore()
+    
 
 def writeTo(logFileName, line):
     verifyLogDir()
