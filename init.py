@@ -56,14 +56,3 @@ if not os.path.exists(filename):
     print(f"File '{filename}' created successfully!")
 else:
     print(f"File '{filename}' already exists.")
-
-
-directory = "logs"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # If it doesn't exist, create it
-    os.makedirs(directory)
-    print(f"Directory '{directory}' created successfully.")
-else:
-    print(f"Directory '{directory}' already exists.")
