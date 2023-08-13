@@ -1,4 +1,3 @@
-import { environment } from "@/environment";
 import { useState, useEffect } from "react";
 
 function StatsScraperButton() {
@@ -6,7 +5,7 @@ function StatsScraperButton() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${environment.API_BASE_URL}/stats_scraper`);
+      const response = await fetch("http://127.0.0.1:8000/stats_scraper");
       const data = await response.json();
       setIsRunning(data.Running);
     } catch (error) {
@@ -26,8 +25,8 @@ function StatsScraperButton() {
 
   const handleButtonClick = () => {
     const apiUrl = isRunning
-      ? `${environment.API_BASE_URL}/stats_scraper/stop`
-      : `${environment.API_BASE_URL}/stats_scraper/start`;
+      ? "http://127.0.0.1:8000/stats_scraper/stop"
+      : "http://127.0.0.1:8000/stats_scraper/start";
 
     fetch(apiUrl, {
       method: "POST",
@@ -43,22 +42,16 @@ function StatsScraperButton() {
   };
 
   return (
-    <div>
+    <div className="p-[0.5vw]">
       <button
         className={
           isRunning
-            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
-            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+            ? "p-[0.5vw] rounded-[0.5vw] w-[6.5vw] h-[6.5vw] bg-transparent border-[0.1vw] border-green-custom-light text-green-custom-light transition delay-50 hover:bg-blue-custom-highlight hover:border-blue-custom-highlight"
+            : "p-[0.5vw] rounded-[0.5vw] w-[6.5vw] h-[6.5vw] bg-transparent border-[0.1vw] border-red-custom text-red-custom transition delay-50 hover:bg-red-custom-highlight hover:border-red-custom-highlight hover:text-black-custom-text "
         }
-        onClick={handleButtonClick}
-      >
-        {isRunning ? "Stop" : "Start"}
+        onClick={handleButtonClick}>
+        Market Stats
       </button>
-      <span>
-        {isRunning
-          ? " - Stats Reader Status: Running"
-          : " - Stats Reader Status: Not running"}
-      </span>
     </div>
   );
 }

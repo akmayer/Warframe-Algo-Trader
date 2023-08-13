@@ -10,7 +10,6 @@ import LiveScraperButton from "./LiveScraperButton";
 import StatsScraperButton from "./StatsScraperButton";
 import ScreenReaderButton from "./ScreenReaderButton";
 import GraphGen from "./GraphGen";
-import { environment } from "@/environment";
 
 interface ItemTotals {
   total_purchase_price: number;
@@ -19,7 +18,7 @@ interface ItemTotals {
 
 async function fetchItemTotals(): Promise<ItemTotals> {
   try {
-    const response = await fetch(`${environment.API_BASE_URL}/items/sum`);
+    const response = await fetch("http://127.0.0.1:8000/items/sum");
     const data = await response.json();
     return data;
   } catch (error) {
@@ -53,37 +52,39 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex h-full min-h-screen text-purple-custom-light bg-gradient-to-b from-black-custom via-cyan-900 to-cyan-800">
-      <div className="w-1/2 text-center items-center p-32 justify-center">
+      <div className="flex h-full min-h-screen text-grey-custom bg-grey-custom-green bg-cover bg-center ">
         <Clock />
+        <div className="w-[50vw] text-center items-center p-[5vw] justify-center self-center">
 
-        <h1 className="text-center font-semibold pb-12 text-4xl">
-          Inventory Manager
-        </h1>
-        <BuyBlock />
-        <br></br>
-        <RowDisplay />
-        <br></br>
-        <div className="p-4 rounded-md  bg-black-custom shadow-lg shadow-slate-400">
-          Total Purchase Price: {itemTotals.total_purchase_price}
-          <br />
-          Total Listed Price: {itemTotals.total_listed_price}
+          
+          
+          <h1 className="text-center font-semibold pb-[1vw] text-[2vw]">
+            Inventory Manager
+          </h1>
+          <BuyBlock />
+          
+          <RowDisplay />
+          
+          <div className="text-left p-[1vw] m-auto rounded-[1vw] bg-grey-custom-light w-[36vw] text-[0.8vw]">
+            Total Purchase Price: {itemTotals.total_purchase_price}<br />
+            Total Listed Price: {itemTotals.total_listed_price}
+          </div>
+          
+        </div>
+        <div className="w-[50vw] text-center items-center p-[5vw] justify-center self-center">
+          <h1 className="text-center font-semibold pb-[1vw] text-[2vw]">
+            Transaction Control
+          </h1>
+          <div className="flex flex-row justify-center p-[1vw] rounded-[1vw] bg-grey-custom-light text-[0.9vw]">
+            <StatsScraperButton />
+            <LiveScraperButton />
+            <ScreenReaderButton />
+          </div>
+          <h1 className="text-center font-semibold pt-[1vw] pb-[1vw] text-[2vw]">
+            Visualizations
+          </h1>
+          <GraphGen />
         </div>
       </div>
-      <div className="w-1/2 text-center items-center p-32 justify-center">
-        <h1 className="text-center font-semibold pb-12 text-4xl">
-          Transaction Control
-        </h1>
-        <div className="p-4 rounded-full bg-black-custom shadow-lg shadow-slate-400">
-          <StatsScraperButton />
-          <LiveScraperButton />
-          <ScreenReaderButton />
-        </div>
-        <h1 className="text-center font-semibold p-12 text-4xl">
-          Visualizations
-        </h1>
-        <GraphGen />
-      </div>
-    </div>
-  );
+  )
 }
