@@ -40,8 +40,11 @@ con.close()
 
 filename = "config.json"
 config_data = {
+    "notif_platform": "",
     "pushbutton_token": "",
     "pushbutton_device_iden": "",
+    "pushover_user_token": "",
+    "pushover_application_token": "",
     "wfm_jwt_token": "",
     "inGameName" : "",
     "runningLiveScraper": False,

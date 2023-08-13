@@ -18,9 +18,11 @@ def setConfigStatus(key, value):
         outfile.write(json.dumps(configData, indent=4))
     return
 
-
+notif_platform = configData["notif_platform"]
 pb_token = configData["pushbutton_token"]
 pushbutton_device_iden = configData["pushbutton_device_iden"]
+pushover_user_token = configData["pushover_user_token"]
+pushover_application_token = configData["pushover_application_token"]
 jwt_token = configData["wfm_jwt_token"]
 jwt_token = "JWT " + jwt_token.split(" ")[-1]
 inGameName = configData['inGameName']
