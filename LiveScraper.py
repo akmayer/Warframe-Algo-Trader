@@ -28,7 +28,7 @@ def getWeekIncrease(row):
         df = pd.read_csv("allItemData.csv")
     weekDF = pd.DataFrame(df[(df.get("name") == row["name"]) & (df.get("order_type") == "closed")]
                          ).sort_values(by='datetime').reset_index().drop("index", axis=1)
-    change = weekDF.loc[0, "avg_price"] - weekDF.loc[6, "avg_price"]
+    change = weekDF.loc[6, "median"] - weekDF.loc[0, "median"]
     return change
 
 def getBuySellOverlap():
