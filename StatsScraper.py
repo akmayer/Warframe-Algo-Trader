@@ -8,12 +8,17 @@ import time
 import config
 import logging
 from itertools import chain
+import customLogger
 
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
+
+customLogger.clearFile("relicsAPICalls.log")
+customLogger.writeTo("relicsApiCalls.log", "Started Stats Scraper")
 
 
 allItemsLink = "https://api.warframe.market/v1/items"
 r = requests.get(allItemsLink)
+customLogger.writeTo("wfmAPICalls.log", f"GET:{allItemsLink}\tResponse:{r.status_code}")
 itemList = r.json()["payload"]["items"]
 itemNameList = [x["url_name"] for x in itemList if "relic" not in x["url_name"]]
 urlLookup = {x["item_name"] : x["url_name"] for x in itemList}
@@ -63,6 +68,7 @@ frames = []
 for dayStr in tqdm(lastSevenDays):
     link = getDataLink(dayStr)
     r = requests.get(link)
+    customLogger.writeTo("relicsApiCalls.log", f"GET:{link}\tResponse:{r.status_code}")
     if str(r.status_code)[0] != "2" or foundData >= 7:
         continue
     foundData += 1

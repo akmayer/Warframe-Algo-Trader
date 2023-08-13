@@ -1,4 +1,3 @@
-import json, requests, time
 import pandas as pd
 import sqlite3
 import json, requests, time
@@ -10,9 +9,16 @@ import SelfTexting
 import config
 import numpy as np
 import logging
+import customLogger
 
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
+customLogger.clearFile("wfmAPICalls.log")
+customLogger.clearFile("orderTracker.log")
+customLogger.writeTo("orderTracker.log", "Started Live Scraper")
+
+def ignoreItems(itemName):
+    return itemName in config.blacklistedItems
 
 
 def getWeekIncrease(row):
@@ -67,7 +73,10 @@ def getBuySellOverlap():
             }
         ).set_index("name")
     dfFilter["weekPriceShift"] = dfFilter.apply(getWeekIncrease, axis=1)
-    dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames))]
+    if config.strictWhitelist:
+        dfFilter = dfFilter[(dfFilter.get("name").isin(config.whitelistedItems))]
+    else:
+        dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames)) | (dfFilter.get("name").isin(config.whitelistedItems))]
     names = dfFilter["name"].unique()
 
     dfFiltered = averaged_df[averaged_df["name"].isin(names)]
@@ -110,7 +119,6 @@ def getBuySellOverlap():
     return buySellOverlap
 
 buySellOverlap = getBuySellOverlap()
-warframeApi = WarframeApi()
 
 
 def updateDBPrice(itemName, listedPrice):
@@ -139,16 +147,20 @@ def getItemRank(buySellOverlap, url_name):
 def deleteAllOrders():
     currentOrders = getOrders()
     for order in currentOrders["sell_orders"]:
-        if config.getConfigStatus("runningLiveScraper"):
+        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"]):
             #logging.debug(order)
             updateDBPrice(order["item"]["url_name"], None)
             deleteOrder(order["id"])
     for order in currentOrders["buy_orders"]:
-        if config.getConfigStatus("runningLiveScraper"):
+        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"]):
             deleteOrder(order["id"])
 
 def getFilteredDF(item):
     r = warframeApi.get(f"https://api.warframe.market/v1/items/{item}/orders")
+    customLogger.writeTo(
+        "wfmAPICalls.log",
+        f"GET:https://api.warframe.market/v1/items/{item}/orders\tResponse:{r.status_code}"
+    )
     logging.debug(r)
     try:
         data = r.json()
@@ -167,8 +179,7 @@ def getFilteredDF(item):
     return df
 
 
-def ignoreItems(itemName):
-    return itemName in config.blacklistedItems
+
 
 def getMyOrderInformation(item, orderType, currentOrders):
     myOrdersDF = pd.DataFrame.from_dict(currentOrders[f'{orderType}_orders'])
@@ -349,7 +360,6 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
     myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
 
     if (not (item in inventory["name"].unique())) and (not myOrderActive):
-        logging.debug("You don't have any of this item in inventory to sell.")
         return
     elif (not (item in inventory["name"].unique())):
         updateDBPrice(myOrderID, None)
@@ -373,12 +383,11 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
             updateDBPrice(item, postPrice)
             return
     bestSeller = liveSellerDF.iloc[0]
-    closedAvgMetric = bestSeller["platinum"] - itemStats["closedAvg"]
     postPrice = bestSeller['platinum']
     inventory = inventory[inventory.get("name") == item].reset_index()
     
 
-    if bestSeller["platinum"] - avgCost <= 0:
+    if bestSeller["platinum"] - avgCost <= -10:
         SelfTexting.send_push("EMERGENCY", f"The price of {item} is probably dropping and you should sell this to minimize losses asap")
 
     if avgCost + 10 > postPrice and numSellers >= 2:
@@ -428,13 +437,12 @@ try:
         inventory = pd.read_sql_query("SELECT * FROM inventory", con)
         con.close()
         inventory = inventory[inventory.get("number") > 0]
+        inventoryNames = list(inventory["name"].unique())
 
-        #this line below doens't actually do anything since buySellOverlap is already filtered, this should be replaced with
-        #a new DFFilter last line so hopefully some functions are made in StatsInterpreter for making DFFilter and buySellOverlap
         buySellOverlap = getBuySellOverlap()
         interestingItems = list(buySellOverlap.index)
 
-        logging.debug("Interesting Items:\n" + ", ".join(interestingItems).replace("_", " ").title())
+        
 
         currentOrders = getOrders()
         myBuyOrdersDF = pd.DataFrame.from_dict(currentOrders["buy_orders"])
@@ -447,6 +455,14 @@ try:
         mySellOrdersDF = pd.DataFrame.from_dict(currentOrders["sell_orders"])
         if mySellOrdersDF.shape[0] != 0:
             mySellOrdersDF["url_name"] = mySellOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
+        
+        interestingItems += config.whitelistedItems
+        interestingItems += inventoryNames
+
+        interestingItems = list(set(interestingItems))
+        
+        logging.debug("Interesting Items:\n" + ", ".join(interestingItems).replace("_", " ").title())
+        customLogger.writeTo("orderTracker.log", f"Interesting Items (Post-Whitelist):{' '.join(interestingItems)}")
 
         for item in interestingItems:
             if not config.getConfigStatus("runningLiveScraper"):
@@ -459,12 +475,29 @@ try:
             inventory = inventory[inventory.get("number") > 0]
             #t = time.time()
 
-            itemStats = buySellOverlap.loc[item]
-            logging.debug(item.replace("_", " ").title() + f"(closedAvg: {round(itemStats['closedAvg'], 2)}):")
             liveOrderDF = getFilteredDF(item)
             if liveOrderDF.empty:
                 logging.debug("There was an error with seeing the live orders on this item.")
                 continue
+
+            if item not in list(buySellOverlap.index):
+                r = warframeApi.get(f"https://api.warframe.market/v1/items/{item}")
+                customLogger.writeTo("wfmAPICalls.log", f"GET:https://api.warframe.market/v1/items/{item}\tResponse:{r.status_code}")
+                if r.status_code != 200:
+                    continue
+
+                itemID = r.json()["payload"]["item"]['id']
+                try:
+                    modRank = r.json()["payload"]["item"]["items_in_set"][0]['mod_max_rank']
+                except KeyError:
+                    modRank = None
+                compareLiveOrdersWhenSelling(item, liveOrderDF, None, currentOrders, itemID, modRank, inventory)
+
+                continue
+
+            itemStats = buySellOverlap.loc[item]
+            logging.debug(item.replace("_", " ").title() + f"(closedAvg: {round(itemStats['closedAvg'], 2)}):")
+            
             itemID = getItemId(item)
             modRank = getItemRank(buySellOverlap, item)
 
@@ -485,6 +518,7 @@ except OSError as err:
 except Exception as err:
     config.setConfigStatus("runningLiveScraper", False)
     logging.debug(f"Unexpected {err=}, {type(err)=}")
+    customLogger.writeTo("orderTracker.log", f"Error in LiveScraper: Unexpected {err=}, {type(err)=}")
     raise Exception(f"Unexpected {err=}, {type(err)=}")
 
 config.setConfigStatus("runningLiveScraper", False)

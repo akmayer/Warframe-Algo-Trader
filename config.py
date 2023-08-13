@@ -1,7 +1,7 @@
 import json
-f = open("config.json")
-configData = json.load(f)
-f.close()
+conf = open("config.json")
+configData = json.load(conf)
+conf.close()
 
 def getConfigStatus(key):
     f = open("config.json")
@@ -26,11 +26,13 @@ jwt_token = "JWT " + jwt_token.split(" ")[-1]
 inGameName = configData['inGameName']
 platform = configData['platform'].lower()
 # Read JSON file
-with open('settings.json') as file:
-    data = json.load(file)
+with open('settings.json') as settings:
+    data = json.load(settings)
 
 # Extract values and initialize variables
 blacklistedItems = data['blacklistedItems']
+whitelistedItems = data['whitelistedItems']
+strictWhitelist = data['strictWhitelist']
 priceShiftThreshold = data['priceShiftThreshold']
 avgPriceCap = data['avgPriceCap']
 maxTotalPlatCap = data['maxTotalPlatCap']

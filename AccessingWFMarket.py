@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import time
 import config
 import pandas as pd
+import customLogger
 
 class WarframeApi:
     def __init__(self):
@@ -16,36 +17,40 @@ class WarframeApi:
             "platform": config.platform,
             "language": "en",
             "Authorization": self.jwt_token,
-            'User-Agent': 'Warframe Algo Trader/1.2.4',
+            'User-Agent': 'Warframe Algo Trader/1.2.5',
         }
         self.lastRequestTime = 0
         self.timeBetweenRequests = 3
 
     def waitUntilDelayEnds(self):
         if (time.time() - self.lastRequestTime) < self.timeBetweenRequests:
-            time.sleep(time.time() - self.lastRequestTime)
+            time.sleep(self.lastRequestTime - time.time() + self.timeBetweenRequests)
         
     def get(self, link, headers=None):
         t0 = time.time()
         self.waitUntilDelayEnds()
+        self.lastRequestTime = time.time()
         r = requests.get(link, headers=self.headers)
         #print(time.time()-t0)
         return r
     def post(self, link, json, headers=None):
         t0 = time.time()
         self.waitUntilDelayEnds()
+        self.lastRequestTime = time.time()
         r = requests.post(link, headers=self.headers, json=json)
         #print(time.time()-t0)
         return r
     def delete(self, link, headers=None):
         t0 = time.time()
         self.waitUntilDelayEnds()
+        self.lastRequestTime = time.time()
         r = requests.delete(link, headers=self.headers)
         #print(time.time()-t0)
         return r
     def put(self, link, json, headers=None):
         t0 = time.time()
         self.waitUntilDelayEnds()
+        self.lastRequestTime = time.time()
         r = requests.put(link, headers=self.headers, json=json)
         #print(time.time()-t0)
         return r
@@ -65,6 +70,10 @@ def login(
     """
     content = {"email": user_email, "password": user_password, "auth_type": "header"}
     response = warframeApi.post(f"{WFM_API}/auth/signin", data=json.dumps(content))
+    customLogger.writeTo(
+        "wfmAPICalls.log",
+        f"POST:{WFM_API}/auth/signin\tResponse:{response.status_code}"
+    )
     if response.status_code != 200:
         return None, None
     return (response.json()["payload"]["user"]["ingame_name"], response.headers["Authorization"])
@@ -85,19 +94,38 @@ def postOrder(item, order_type, platinum, quantity, visible, modRank, itemName):
     
     response = warframeApi.post(f'{WFM_API}/profile/orders', json=json_data)
 
+    customLogger.writeTo(
+        "wfmAPICalls.log",
+        f"POST:{WFM_API}/profile/orders\tResponse:{response.status_code}\tItem:{itemName}\tOrder Type:{order_type}\tPlatinum:{platinum}\tQuantity:{quantity}\tVisible:{visible}"
+    )
+
     if response.status_code == 200:
-        f = open("tradeLog.txt", "a")
-        f.write(f"POSTED - item: {itemName} - order_type : {order_type} - platinum : {platinum} - visible : {visible}\n")
-        f.close()
+        customLogger.writeTo(
+            "orderTracker.log",
+            f"POSTED\tItem:{itemName}\tOrder Type:{order_type}\tPlatinum:{platinum}\tQuantity:{quantity}\tVisible:{visible}"
+        )
 
     return response
     
 
 def deleteOrder(orderID):
-    warframeApi.delete(f'{WFM_API}/profile/orders/{orderID}')
+    r = warframeApi.delete(f'{WFM_API}/profile/orders/{orderID}')
+    customLogger.writeTo(
+        "wfmAPICalls.log",
+        f"DELETE:{WFM_API}/profile/orders/{orderID}\tResponse:{r.status_code}"
+    )
+    if r.status_code == 200:
+        customLogger.writeTo(
+            "orderTracker.log",
+            f"DELETED\tOrder ID: {orderID}"
+        )
     
 def getOrders():
     r = warframeApi.get(f"{WFM_API}/profile/{config.inGameName}/orders")
+    customLogger.writeTo(
+        "wfmAPICalls.log",
+        f"GET:{WFM_API}/profile/{config.inGameName}/orders\tResponse:{r.status_code}"
+    )
     return r.json()["payload"]
 
 def updateListing(listing_id, platinum, quantity, visibility, itemName, order_type):
@@ -109,11 +137,16 @@ def updateListing(listing_id, platinum, quantity, visibility, itemName, order_ty
             "visible": visibility
         }
         response = warframeApi.put(url, json=contents)
+        customLogger.writeTo(
+            "wfmAPICalls.log",
+            f"PUT:{WFM_API}/profile/orders/{listing_id}\tResponse:{response.status_code}\tItem:{itemName}\tOrder Type:{order_type}\tPlatinum:{platinum}\tVisible:{visibility}"
+        )  
         response.raise_for_status()  # Raises an exception for non-2xx status codes
         if response.status_code == 200:
-            f = open("tradeLog.txt", "a")
-            f.write(f"POSTED - item: {itemName} - order_type : {order_type} - platinum : {platinum} - visible : {visibility}\n")
-            f.close()
+            customLogger.writeTo(
+                "orderTracker.log",
+                f"UPDATED\tItem:{itemName}\tOrder Type:{order_type}\tPlatinum:{platinum}\tVisible:{visibility}"
+            )
         return True
     except requests.exceptions.RequestException as e:
         print(f"update_listing: {e}")
