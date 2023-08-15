@@ -17,7 +17,7 @@ class WarframeApi:
             "platform": config.platform,
             "language": "en",
             "Authorization": self.jwt_token,
-            'User-Agent': 'Warframe Algo Trader/1.2.6',
+            'User-Agent': 'Warframe Algo Trader/1.2.7',
         }
         self.lastRequestTime = 0
         self.timeBetweenRequests = 3
