@@ -2,6 +2,8 @@ import requests
 import config
 
 def sendMessage(message):
+    if config.webhookLink == "":
+        return
 
     if config.pingOnNotif:
         r = requests.get(config.webhookLink)
