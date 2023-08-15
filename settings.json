@@ -10,5 +10,6 @@
     "avgPriceCap" : 600,
     "maxTotalPlatCap": 100000,
     "volumeThreshold" : 15,
-    "rangeThreshold" : 10
+    "rangeThreshold" : 10,
+    "pingOnNotif" : true
 }

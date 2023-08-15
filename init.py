@@ -42,6 +42,7 @@ filename = "config.json"
 config_data = {
     "pushbutton_token": "",
     "pushbutton_device_iden": "",
+    "webhookLink" : "",
     "wfm_jwt_token": "",
     "inGameName" : "",
     "runningLiveScraper": False,

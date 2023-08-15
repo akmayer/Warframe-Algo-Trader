@@ -3,6 +3,7 @@ import re
 import SelfTexting
 import config
 from time import sleep
+import DiscordWebhook
 
 import logging
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
@@ -26,6 +27,7 @@ class WarframeLogParser:
             logging.debug(username)
             print(username)
             SelfTexting.send_push("WFTrade", f"Whisper(s) from {username}")
+            DiscordWebhook.sendMessage(f"You have whisper(s) from {username}")
 
     def follow_and_parse_log(self):
         with open(self.log_path, 'r', encoding='latin-1') as file:

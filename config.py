@@ -25,6 +25,7 @@ jwt_token = configData["wfm_jwt_token"]
 jwt_token = "JWT " + jwt_token.split(" ")[-1]
 inGameName = configData['inGameName']
 platform = configData['platform'].lower()
+webhookLink = configData["webhookLink"]
 # Read JSON file
 with open('settings.json') as settings:
     data = json.load(settings)
@@ -38,3 +39,4 @@ avgPriceCap = data['avgPriceCap']
 maxTotalPlatCap = data['maxTotalPlatCap']
 volumeThreshold = data['volumeThreshold']
 rangeThreshold = data['rangeThreshold']
+pingOnNotif = data["pingOnNotif"]
