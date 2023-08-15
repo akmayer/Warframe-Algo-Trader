@@ -56,8 +56,8 @@ function ScreenReaderButton() {
       </button>
       <span>
         {isRunning
-          ? " - Screen Reader Status: Running"
-          : " - Screen Reader Status: Not running"}
+          ? " - Whisper Sensor: Running"
+          : " - Whisper Sensor: Not running"}
       </span>
     </div>
   );
