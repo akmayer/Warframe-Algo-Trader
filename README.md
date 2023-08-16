@@ -78,13 +78,6 @@ If you would like a visual guide for reference, I have posted that here: https:/
 
 If you do not care about either notification system, you can proceed to [Running](https://github.com/akmayer/Warframe-Algo-Trader/tree/main#running) as neither is required.
 
-### Debugging Setup
-
-If you want to use the debug mode (Breakpoint in the python code)
-Step 1: [Install Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) for Vs code.
-Step 2: Run the debugger from the debugger tab.
-Step 3: Navigate to the my-app folder from the command line and run npm run dev from the console window.
-
 #### Discord Webhook Notifications Setup
 
 1. Make a new discord server.
@@ -98,6 +91,14 @@ Step 3: Navigate to the my-app folder from the command line and run npm run dev 
 2. After adding your phone as a device, make sure you are in the "Devices" tab. Then, on the website, click your phone to open the push chats with it.
 3. Clicking your phone will change the url to `https://www.pushbullet.com/#devices/<DEVICE_TOKEN>`. Copy this token and paste it into your config.json file with the key, "pushbullet_device_iden".
 4. Under the settings tab, click Create Access Token. Copy that token and paste it into your config.json file with the key, "pushbullet_token".
+
+#### Debugging Setup
+
+If you want to use the debug mode (Breakpoint in the python code):
+
+1. [Install Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) for VSCode
+2. Run the debugger from the debugger tab.
+3. Navigate to the my-app folder from the command line and run npm run dev from the console window.
 
 ### Running
 
