@@ -21,7 +21,7 @@ class WarframeLogParser:
         # Adding tab with channel name: FAlextremeYT to index 10
         # This line fits all our criteria, it gets called when you receive a new whisper from someone,
         # the username is in cleartext, and any tabs with an index of 6 or above are reserved for usernames so no false alarms from other chat windows.
-        result = re.search(r'(F)(.*\S)( to index (?:[1-9]|[1-9]\d)$)', line)
+        result = re.search(r'( F)(.*\S)( to index (?:[1-9]|[1-9]\d)$)', line)
         if result is not None:
             username = self.clean_username(result.group(2))
             logging.debug(username)
