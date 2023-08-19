@@ -19,6 +19,16 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 
 <img src=https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/ef79875f-bfbb-435a-a248-e78d738ef059 width="495" height="270">
 
+## Related Ongoing Projects:
+
+This is not necessarily a recommendation or endorsement of these projects, but are something interesting you may want to check out related to this one.
+
+
+[QuantFrame](https://github.com/Kenya-DK/quantframe-react/tree/6e22637fb8878c060bc1f0e0228b91f33df456d2)
+- A port to TypeScript + Rust + Tauri rather than Python with the goal of making a downloadable program without all the configuration needed in this one.
+
+A WIP [installation script](https://github.com/MurasakinoNll/WFAT-setup/tree/main) for this project.
+- A batch file hoping to make downloading this program and some prerequisites more straightforward and less manual.
 
 ## How To Use
 
