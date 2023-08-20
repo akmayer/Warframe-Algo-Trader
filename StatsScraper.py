@@ -119,6 +119,9 @@ df["item_id"] = df.apply(lambda row : itemListDF[itemListDF["url_name"] == row["
 df["order_type"] = df.get("order_type").str.lower()
 df.to_csv("allItemData.csv", index=False)
 
-os.remove("allItemDataBackup.csv")
+try:
+    os.remove("allItemDataBackup.csv")
+except FileNotFoundError:
+    pass
 
 config.setConfigStatus("runningStatisticsScraper", False)
