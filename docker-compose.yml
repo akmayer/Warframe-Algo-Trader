@@ -3,9 +3,9 @@ version: "3.9"
 services:
   python-app:
     image: yelbuzz/warframe-algo-trader-python-app
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: warframe-algo-trader-python-app
     volumes:
       - .:/app
@@ -16,11 +16,11 @@ services:
 
   web-ui:
     image: yelbuzz/warframe-algo-trader-web-ui
-    #build:
-    #  context: ./my-app
-    #  dockerfile: Dockerfile
-    #  args:
-    #    - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
     container_name: warframe-algo-trader-web-ui
     ports:
       - 3000:3000
