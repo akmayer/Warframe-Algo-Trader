@@ -29,7 +29,7 @@ def send_android_push(title, message):
         'type': 'note',
         'device_iden' : config.pushbutton_device_iden
     }
-    
+
     response = requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, json=json_data)
 
 
@@ -45,4 +45,3 @@ def send_push(title, message):
 if __name__ == "__main__" and '__file__' not in globals():
     time.sleep(10)
     send_android_push("test", "test config")
-    
