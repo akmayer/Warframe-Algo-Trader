@@ -13,7 +13,10 @@ import logging
 import json
 import subprocess
 import io
+import time
 from fastapi.responses import StreamingResponse
+
+logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
 
 f = open("config.json")
@@ -84,11 +87,10 @@ screenReaderProcess = None
 async def startup_event():
     import signal
     signal.signal(signal.SIGINT, receive_signal)
-    logger = logging.getLogger("uvicorn.access")
+    #logger = logging.getLogger("uvicorn.access")
     #handler = logging.StreamHandler()
     #handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
     #logger.addHandler(handler)
-    #logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
     config.setConfigStatus("runningWarframeScreenDetect", False)
     config.setConfigStatus("runningLiveScraper", False)
@@ -104,7 +106,6 @@ async def testLog():
     logging.error("Testing error.")
     #p.wait()
     #p.kill()
-    logging.info(f"Config testVar {config.testVar}.")
     return {}
 
 @app.get("/")
@@ -214,7 +215,7 @@ async def sellItem(item : Item):
         con.close()
         return {"Executed" : False, "Reason": "Item not in database."}
 
-def get_order_id(item_name: str):
+def get_order_id(t : Transact):
     url = f"https://api.warframe.market/v1/profile/{config.inGameName}/orders"
 
     headers = {
@@ -230,10 +231,10 @@ def get_order_id(item_name: str):
 
     if response.status_code == 200:
         data = response.json()
-        sell_orders = data["payload"]["sell_orders"]
+        orders = data["payload"][f"{t.transaction_type}_orders"]
 
-        for order in sell_orders:
-            if order["item"]["url_name"] == item_name:
+        for order in orders:
+            if order["item"]["url_name"] == t.name:
                 return order["id"]
 
         # If no matching order found
@@ -242,20 +243,26 @@ def get_order_id(item_name: str):
     # If API call failed
     return None
 
-@app.put("/market/{item_name}")
-def delete_order(item_name: str):
+@app.put("/market/delete")
+def delete_order(t : Transact):
     con = sqlite3.connect("inventory.db")
     cur = con.cursor()
-    numLeft = cur.execute(f"SELECT SUM(number) FROM inventory WHERE name='{item_name}'").fetchone()[0]
+    numLeft = cur.execute(f"SELECT SUM(number) FROM inventory WHERE name='{t.name}'").fetchone()[0]
     con.close()
     if numLeft != 1:
         return {"message": "Not deleting order since you have may of these left"}
     
     # Make the DELETE API call
-    order_id = get_order_id(item_name)  
+    order_id = get_order_id(t)
+
+    time.sleep(0.33)
     
     if order_id is None:
-        return {"message": "Order not found"}
+        raise HTTPException(
+            status_code=400,
+            detail=f'Something went getting the id of this order.',
+        )
+
     
     delete_url = f"https://api.warframe.market/v1/profile/orders/{order_id}"
     
@@ -274,9 +281,43 @@ def delete_order(item_name: str):
         return {"message": "Order deleted successfully"}
     else:
         raise HTTPException(
+            status_code=400,
+            detail=f'Something went wrong accessing wf.market api.',
+        )
+
+@app.put("/market/close")
+def close_order(t : Transact):
+    logging.error(t.name)
+    # Make the DELETE API call
+    order_id = get_order_id(t)
+
+    time.sleep(0.33)
+    
+    if order_id is None:
+        return {"message": "Order not found"}
+
+    close_url = f"https://api.warframe.market/v1/profile/orders/close/{order_id}"
+    
+    headers = {
+            "Content-Type": "application/json; utf-8",
+            "Accept": "application/json",
+            "auth_type": "header",
+            "platform": config.platform,
+            "language": "en",
+            "Authorization": config.jwt_token,
+            'User-Agent': 'Warframe Algo Trader/1.2.8',
+        }
+    
+    response = requests.put(close_url, headers=headers, json={})
+    
+    if response.status_code == 200:
+        return {"message": "Order closed successfully"}
+    else:
+        raise HTTPException(
         status_code=400,
         detail=f'Something went wrong accessing wf.market api.',
     )
+
 
 @app.get("/transactions")
 async def get_transactions():

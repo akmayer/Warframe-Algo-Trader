@@ -67,13 +67,30 @@ export default function RowDisplay() {
     // Disable the button
     (document.getElementById(buttonId) as HTMLButtonElement)!.disabled = true;
 
+    const parts = buttonId.split("-");
+    const lastPart = parts[parts.length - 1];
+
+    let apiEndpoint: string;
+
+    if (lastPart === "del") {
+      // Perform specific action for "del"
+      apiEndpoint = `${environment.API_BASE_URL}/market/remove`;
+      console.log("Button with id", buttonId, "clicked. Action: 'del'");
+      // Your action for "del" goes here
+    } else {
+      // Perform default action for other cases
+      apiEndpoint = `${environment.API_BASE_URL}/market/close`;
+      console.log("Button with id", buttonId, "clicked. Default action");
+      // Your default action goes here
+    }
+
     // Trigger PUT API call to "/market/{item_name}"
-    fetch(`${environment.API_BASE_URL}/market/${itemName}`, {
+    fetch(`${apiEndpoint}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(marketData),
+      body: JSON.stringify(transactionData),
     })
       .then((response) => response.json())
       .then((marketResponseData) => {
@@ -138,7 +155,8 @@ export default function RowDisplay() {
         </div>
         {rows.map((row) => {
           const textBoxId = `textbox-${row.id}`;
-          const buttonId = `button-${row.id}`;
+          const sellButtonId = `button-${row.id}-sell`;
+          const delButtonId = `button-${row.id}-del`;
           return (
             <div
               key={row.id}
@@ -164,13 +182,30 @@ export default function RowDisplay() {
                         row.number,
                         (document.getElementById(textBoxId) as HTMLInputElement)
                           ?.value,
-                        buttonId
+                          sellButtonId
                       )
                     }
-                    id={buttonId}
+                    id={sellButtonId}
                     className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
                   >
                     Sell
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick(
+                        row.name,
+                        row.purchasePrice,
+                        row.listedPrice,
+                        row.number,
+                        (document.getElementById(textBoxId) as HTMLInputElement)
+                          ?.value,
+                          delButtonId
+                      )
+                    }
+                    id={delButtonId}
+                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>

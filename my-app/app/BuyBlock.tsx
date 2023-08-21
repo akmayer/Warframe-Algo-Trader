@@ -22,7 +22,7 @@ export default function BuyBlock() {
     setItemName(formattedInputValue);
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (buttonId : string) => {
     if (itemName === "" || price === "" || isNaN(Number(price))) {
       // Check if either textbox is empty or price is not a number
       return;
@@ -40,8 +40,27 @@ export default function BuyBlock() {
       purchasePrice: price,
       number: 1,
     };
-    (document.getElementById("buyButton") as HTMLButtonElement)!.disabled =
-      true;
+    (document.getElementById(buttonId) as HTMLButtonElement)!.disabled = true;
+
+    if (buttonId === "buyButton") {
+      const transactionData = {
+        name: formattedItemName,
+        transaction_type: "buy",
+        price: price,
+      };
+
+      fetch(`${environment.API_BASE_URL}/market/close`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+    }
 
     fetch(`${environment.API_BASE_URL}/item`, {
       method: "POST",
@@ -87,7 +106,7 @@ export default function BuyBlock() {
     setItemName("");
     setPrice("");
 
-    (document.getElementById("buyButton") as HTMLButtonElement)!.disabled =
+    (document.getElementById(buttonId) as HTMLButtonElement)!.disabled =
       false;
   };
 
@@ -117,10 +136,17 @@ export default function BuyBlock() {
       <div className="pt-2">
         <button
           className="py-2 px-6 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
-          onClick={handleButtonClick}
+          onClick={() => handleButtonClick("buyButton")}
           id="buyButton"
         >
           Buy
+        </button>
+        <button
+          className="py-2 px-6 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+          onClick={() => handleButtonClick("addButton")}
+          id="addButton"
+        >
+          Buy (w/o Reporting)
         </button>
       </div>
     </div>
