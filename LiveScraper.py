@@ -21,11 +21,7 @@ def ignoreItems(itemName):
     return itemName in config.blacklistedItems
 
 
-def getWeekIncrease(row):
-    try:
-        df = pd.read_csv("allItemDataBackup.csv")
-    except FileNotFoundError:
-        df = pd.read_csv("allItemData.csv")
+def getWeekIncrease(df, row):
     weekDF = pd.DataFrame(df[(df.get("name") == row["name"]) & (df.get("order_type") == "closed")]
                          ).sort_values(by='datetime').reset_index().drop("index", axis=1)
     change = weekDF.loc[6, "median"] - weekDF.loc[0, "median"]
@@ -72,7 +68,7 @@ def getBuySellOverlap():
                 "item_id" : []
             }
         ).set_index("name")
-    dfFilter["weekPriceShift"] = dfFilter.apply(getWeekIncrease, axis=1)
+    dfFilter["weekPriceShift"] = dfFilter.apply(lambda row : getWeekIncrease(df, row), axis=1)
     if config.strictWhitelist:
         dfFilter = dfFilter[(dfFilter.get("name").isin(config.whitelistedItems))]
     else:
