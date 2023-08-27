@@ -372,7 +372,7 @@ def get_live_scraper_status():
 @app.post("/live_scraper/start")
 def start_live_scraper():
     global liveScraperProcess
-    if config.getConfigStatus("runningLiveScraper"):
+    if config.getConfigStatus("runningLiveScraper") or liveScraperProcess != None:
         return {"Executed" : False, "Reason" : "Scraper already running"}
     else:
         liveScraperProcess = subprocess.Popen(["python", "LiveScraper.py"])
@@ -389,6 +389,7 @@ def stop_live_scraper():
         return {"Executed" : False, "Reason" : "Scraper was not running."}
     config.setConfigStatus("runningLiveScraper", False)
     liveScraperProcess.wait()
+    liveScraperProcess = None
     return {"Executed": True}
 
 @app.get("/stats_scraper")
