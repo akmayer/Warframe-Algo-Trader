@@ -48,8 +48,8 @@ function LiveScraperButton() {
       <button
         className={
           isRunning
-            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
-            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+            ? "button-toggle-on"
+            : "button-toggle-off"
         }
         onClick={handleButtonClick}
       >

@@ -32,11 +32,12 @@
   }
 
 
-  .main-module-control-block {
+  .main-subprocess-control-block {
     text-align: center;
     position:fixed;
     top: 0px;
-    height: 80px;
+    height: 90px;
+    border: 2px solid rgb(118, 108, 128);
   }
 
   .module-row {
@@ -55,16 +56,6 @@
     margin-right: 5vw;
   }
 
-  /* Buy Block Classes: */
-
-  .main-buy-block {
-    justify-content: center;
-    text-align: center;
-    margin-top: 80px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
   .module-header {
     padding-bottom: 20px;
     font-size: 30px;
@@ -75,27 +66,45 @@
 
   }
 
-  /* Inventory Manager Classes: */
+  .main-buy-block {
+    justify-content: center;
+    text-align: center;
+    margin-top: 100px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+  }
 
   .main-inventory-block {
     text-align: center;
-  }
-
-  .inventory-grid {
-    width: 100%;
-  }
-
-  .inventory-row {
-
+    border-radius: 10px;
+    padding-top: 10px;
   }
 
   .inventory-summary {
     text-align: center;
+    padding-bottom: 15px;
+    padding-top: 5px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
+
+  .column-name {
+    padding-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .inventory-grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0px;
+  }
+
+
 
   .visuals-block {
     text-align: center;
-    margin-top: 50px;
+    padding-top: 30px;
   }
   
 
@@ -115,25 +124,48 @@
   }
   
   button:hover {
-    border-color: #d87339;
+    border-color: #2c3b3d;
   }
-  button:active {
-    border-color: #396cd8;
-    background-color: #e8e8e8;
-  }
-  
+
   @media (prefers-color-scheme: dark) {
     :root {
       color: #f6f6f6;
-      background-color: #2f2f2f;
+      background-color: #0d0a10;
     }
   
     input,
     button {
       color: #ffffff;
-      background-color: #0f0f0f98;
+      background-color: #2c3b3d
     }
-    button:active {
-      background-color: #ffffff;
+
+    button:hover {
+      border-color: #9dedf8;
     }
+
+    .button-toggle-on {
+      color: #ffffff;
+      background-color: #aa3939
+    }
+
+    .main-subprocess-control-block {
+      background: #1c1622;
+    }
+
+    .main-buy-block {
+      background: #1c1622;
+    }
+
+    .main-inventory-block {
+      background: #1c1622;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgb(73, 56, 80);
+    }
+
+    .inventory-summary {
+      background: #1c1622;
+    }
+
   }

@@ -51,10 +51,10 @@ const GraphGen: React.FC = () => {
   }
 
   return (
-    <div className="p-8 shadow-lg shadow-slate-400 bg-black-custom rounded-md">
+    <div className="">
       <label htmlFor="startDate">Start Date: </label>
       <input
-        className="text-center py-2 px-4 mb-4 border border-purple-custom-saturated rounded-lg bg-slate-600 text-white-custom"
+        className=""
         type="text"
         id="startDate"
         placeholder="YYYY-MM-DD"
@@ -65,7 +65,7 @@ const GraphGen: React.FC = () => {
 
       <label htmlFor="endDate">End Date: </label>
       <input
-        className="text-center py-2 px-4 mb-4 border border-purple-custom-saturated rounded-lg bg-slate-600 text-white-custom"
+        className=""
         type="text"
         id="endDate"
         placeholder="YYYY-MM-DD"
@@ -75,7 +75,7 @@ const GraphGen: React.FC = () => {
       <br></br>
 
       <button
-        className="py-2 px-6 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+        className=""
         onClick={handleButtonClick}
       >
         Load Graph

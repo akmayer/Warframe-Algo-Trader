@@ -144,15 +144,15 @@ export default function RowDisplay() {
 
   return (
     <div className="main-inventory-block">
-      <div className="module-header">Inventory:</div>
+      <div className="module-header">Inventory</div>
       <table className="inventory-grid">
         <tbody>
-          <tr className="inventory-row column-names">
-            <td className="item">Name:</td>
-            <td className="item">Avg Purchase Price:</td>
-            <td className="item">Listed Price:</td>
-            <td className="item">Number Owned:</td>
-            <td className="item">Sell Price:</td>
+          <tr className="inventory-row">
+            <td className="item column-name">Name:</td>
+            <td className="item column-name">Avg Purchase Price:</td>
+            <td className="item column-name">Listed Price:</td>
+            <td className="item column-name">Number Owned:</td>
+            <td className="item column-name">Sell Item:</td>
           </tr>
           {rows.map((row) => {
             const textBoxId = `textbox-${row.id}`;
@@ -173,6 +173,7 @@ export default function RowDisplay() {
                       type="text"
                       id={textBoxId}
                       className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
+                      placeholder="Sell Price"
                     />
                     <button
                       onClick={() =>

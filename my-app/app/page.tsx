@@ -56,7 +56,7 @@ export default function Home() {
     <div className="">
       <Clock />
 
-      <div className="main-module-control-block">
+      <div className="main-subprocess-control-block">
         <div className="subprocess-header">
           Subprocess Control
         </div>
@@ -77,7 +77,6 @@ export default function Home() {
         <BuyBlock />
         <br></br>
         <RowDisplay />
-        <br></br>
         <div className="inventory-summary">
           Total Purchase Price: {itemTotals.total_purchase_price}
           <br />
