@@ -53,23 +53,26 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex h-full min-h-screen text-purple-custom-light bg-gradient-to-b from-black-custom via-cyan-900 to-cyan-800">
-      <div className="w-1/2 text-center items-center p-32 justify-center">
-        <Clock />
-
+    <div className="flex min-h-screen text-sky-200 bg-slate-900">
+      <Clock />
+      <div className="flex-col text-center items-center justify-center border-white border-2 w-full ">
+        
+        {/*
         <h1 className="text-center font-semibold pb-12 text-4xl">
           Inventory Manager
         </h1>
+  */}
         <BuyBlock />
         <br></br>
         <RowDisplay />
         <br></br>
-        <div className="p-4 rounded-md  bg-black-custom shadow-lg shadow-slate-400">
+        <div className="p-4 rounded-md  bg-black-custom">
           Total Purchase Price: {itemTotals.total_purchase_price}
           <br />
           Total Listed Price: {itemTotals.total_listed_price}
         </div>
       </div>
+
       <div className="w-1/2 text-center items-center p-32 justify-center">
         <h1 className="text-center font-semibold pb-12 text-4xl">
           Transaction Control
@@ -84,6 +87,8 @@ export default function Home() {
         </h1>
         <GraphGen />
       </div>
+
     </div>
+   
   );
 }
