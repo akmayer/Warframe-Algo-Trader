@@ -164,7 +164,7 @@ export default function RowDisplay() {
                 className="inventory-row"
               >
                 <td className="item">{row.name}</td>
-                <td className="item">{row.purchasePrice}</td>
+                <td className="item">{(Math.round(row.purchasePrice * 100) / 100).toFixed(2)}</td>
                 <td className="item">{row.listedPrice}</td>
                 <td className="item">{row.number}</td>
                 <td className="item">
