@@ -37,6 +37,7 @@ function LiveScraperButton() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setIsRunning(!isRunning);
       })
       .catch((error) => console.log(error));

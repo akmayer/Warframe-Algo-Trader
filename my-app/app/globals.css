@@ -34,7 +34,6 @@
 
   .main-module-control-block {
     text-align: center;
-    outline:1px solid rgb(0, 0, 0);
     position:fixed;
     top: 0px;
     height: 80px;
@@ -59,7 +58,6 @@
   /* Buy Block Classes: */
 
   .main-buy-block {
-    outline: 1px solid rgb(168, 126, 166);
     justify-content: center;
     text-align: center;
     margin-top: 80px;
@@ -80,7 +78,6 @@
   /* Inventory Manager Classes: */
 
   .main-inventory-block {
-    outline: 1px solid rgb(168, 126, 166);
     text-align: center;
   }
 
