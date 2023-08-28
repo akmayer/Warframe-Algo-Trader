@@ -17,6 +17,7 @@
     margin: 0px;
   }
 
+
   .subprocess-header {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -38,6 +39,7 @@
     top: 0px;
     height: 90px;
     border: 2px solid rgb(118, 108, 128);
+    background-color: #ded1e4;
   }
 
   .module-row {
@@ -73,12 +75,15 @@
     padding-top: 10px;
     padding-bottom: 10px;
     border-radius: 10px;
+    background-color: #ded1e4;
   }
 
   .main-inventory-block {
     text-align: center;
-    border-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     padding-top: 10px;
+    background-color: #ded1e4;
   }
 
   .inventory-summary {
@@ -87,6 +92,7 @@
     padding-top: 5px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    background-color: #ded1e4;
   }
 
   .column-name {
@@ -98,6 +104,10 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #ece3f0;
   }
 
 
@@ -124,8 +134,14 @@
   }
   
   button:hover {
-    border-color: #2c3b3d;
+    border-color: #bd3ed6;
   }
+  
+  .button-toggle-on {
+    color: #ffffff;
+    background-color: #f05c5c
+  }
+
 
   @media (prefers-color-scheme: dark) {
     :root {
