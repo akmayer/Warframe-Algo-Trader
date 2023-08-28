@@ -13,10 +13,44 @@
   
   }
 
+  body {
+    margin: 0px;
+  }
+
+  .subprocess-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
   .clock-section {
     position: absolute;
-    top: 1px;
-    left: 1px;
+    bottom: 1px;
+    right: 1px;
+    text-align: right;
+  }
+
+
+  .main-module-control-block {
+    text-align: center;
+    outline:1px solid rgb(0, 0, 0);
+  }
+
+  .module-row {
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    border-spacing: 5px; /*Optional*/
+  }
+
+  .module-column {
+    display: table-cell;
+  }
+
+  .inventory-manager {
+    margin-left: 5vw;
+    margin-right: 5vw;
   }
 
   /* Buy Block Classes: */
@@ -25,13 +59,15 @@
     outline: 1px solid rgb(168, 126, 166);
     justify-content: center;
     text-align: center;
-    margin-left: 10vw;
-    margin-right: 10vw;
     margin-top: 10vh;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .module-header {
-
+    padding-bottom: 20px;
+    font-size: 30px;
+    font-weight: bold;
   }
 
   .button-collection {
@@ -50,6 +86,7 @@
   }
 
   .inventory-row {
+
   }
   
 

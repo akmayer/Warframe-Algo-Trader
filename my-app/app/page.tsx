@@ -53,9 +53,21 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex min-h-screen text-sky-200 bg-slate-900">
+    <div className="">
       <Clock />
-      <div className="flex-col text-center items-center justify-center border-white border-2 w-full ">
+
+      <div className="main-module-control-block">
+        <div className="subprocess-header">
+          Subprocess Control
+        </div>
+        <div className="module-row">
+          <StatsScraperButton />
+          <LiveScraperButton />
+          <ScreenReaderButton />
+        </div>
+      </div>
+
+      <div className="inventory-manager">
         
         {/*
         <h1 className="text-center font-semibold pb-12 text-4xl">
@@ -73,18 +85,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-1/2 text-center items-center p-32 justify-center">
-        <h1 className="text-center font-semibold pb-12 text-4xl">
-          Transaction Control
-        </h1>
-        <div className="p-4 rounded-full bg-black-custom shadow-lg shadow-slate-400">
-          <StatsScraperButton />
-          <LiveScraperButton />
-          <ScreenReaderButton />
-        </div>
+      <div className="visuals-block">
         <h1 className="text-center font-semibold p-12 text-4xl">
-          Visualizations
-        </h1>
+            Visualizations
+          </h1>
         <GraphGen />
       </div>
 

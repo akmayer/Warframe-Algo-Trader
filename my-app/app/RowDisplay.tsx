@@ -144,74 +144,76 @@ export default function RowDisplay() {
 
   return (
     <div className="main-inventory-block">
-      <h1 className="module-header">Inventory:</h1>
+      <div className="module-header">Inventory:</div>
       <table className="inventory-grid">
-        <tr className="inventory-row column-names">
-          <td className="item">Name:</td>
-          <td className="item">Avg Purchase Price:</td>
-          <td className="item">Listed Price:</td>
-          <td className="item">Number Owned:</td>
-          <td className="item">Sell Price:</td>
-        </tr>
-        {rows.map((row) => {
-          const textBoxId = `textbox-${row.id}`;
-          const sellButtonId = `button-${row.id}-sell`;
-          const delButtonId = `button-${row.id}-del`;
-          return (
-            <tr
-              key={row.id}
-              className="inventory-row"
-            >
-              <td className="item">{row.name}</td>
-              <td className="item">{row.purchasePrice}</td>
-              <td className="item">{row.listedPrice}</td>
-              <td className="item">{row.number}</td>
-              <td className="item">
-                <div className="min-w-[100px]">
-                  <input
-                    type="text"
-                    id={textBoxId}
-                    className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
-                  />
-                  <button
-                    onClick={() =>
-                      handleButtonClick(
-                        row.name,
-                        row.purchasePrice,
-                        row.listedPrice,
-                        row.number,
-                        (document.getElementById(textBoxId) as HTMLInputElement)
-                          ?.value,
+        <tbody>
+          <tr className="inventory-row column-names">
+            <td className="item">Name:</td>
+            <td className="item">Avg Purchase Price:</td>
+            <td className="item">Listed Price:</td>
+            <td className="item">Number Owned:</td>
+            <td className="item">Sell Price:</td>
+          </tr>
+          {rows.map((row) => {
+            const textBoxId = `textbox-${row.id}`;
+            const sellButtonId = `button-${row.id}-sell`;
+            const delButtonId = `button-${row.id}-del`;
+            return (
+              <tr
+                key={row.id}
+                className="inventory-row"
+              >
+                <td className="item">{row.name}</td>
+                <td className="item">{row.purchasePrice}</td>
+                <td className="item">{row.listedPrice}</td>
+                <td className="item">{row.number}</td>
+                <td className="item">
+                  <div className="min-w-[100px]">
+                    <input
+                      type="text"
+                      id={textBoxId}
+                      className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
+                    />
+                    <button
+                      onClick={() =>
+                        handleButtonClick(
+                          row.name,
+                          row.purchasePrice,
+                          row.listedPrice,
+                          row.number,
+                          (document.getElementById(textBoxId) as HTMLInputElement)
+                            ?.value,
                           sellButtonId
-                      )
-                    }
-                    id={sellButtonId}
-                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
-                  >
-                    Sell
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleButtonClick(
-                        row.name,
-                        row.purchasePrice,
-                        row.listedPrice,
-                        row.number,
-                        (document.getElementById(textBoxId) as HTMLInputElement)
-                          ?.value,
+                        )
+                      }
+                      id={sellButtonId}
+                      className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                    >
+                      Sell
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonClick(
+                          row.name,
+                          row.purchasePrice,
+                          row.listedPrice,
+                          row.number,
+                          (document.getElementById(textBoxId) as HTMLInputElement)
+                            ?.value,
                           delButtonId
-                      )
-                    }
-                    id={delButtonId}
-                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
-                  >
-                    Sell (w/o Reporting)
-                  </button>
-                </div>
-              </td>
-            </tr>
-          );
-        })}
+                        )
+                      }
+                      id={delButtonId}
+                      className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                    >
+                      Sell (w/o Reporting)
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
       {inProg}
     </div>

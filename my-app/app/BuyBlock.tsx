@@ -113,7 +113,7 @@ export default function BuyBlock() {
 
   return (
     <div className="main-buy-block">
-      <h1 className="module-header">Purchase New Item:</h1>
+      <div className="module-header">Purchase New Item:</div>
       <input
         className=""
         type="text"

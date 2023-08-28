@@ -43,7 +43,7 @@ function LiveScraperButton() {
   };
 
   return (
-    <div className="p-2">
+    <div className="module-column">
       <button
         className={
           isRunning
@@ -52,13 +52,8 @@ function LiveScraperButton() {
         }
         onClick={handleButtonClick}
       >
-        {isRunning ? "Stop" : "Start"}
+        {isRunning ? "Stop Live Scraper" : "Start Live Scraper"}
       </button>
-      <span>
-        {isRunning
-          ? " - Live Updater Status: Running"
-          : " - Live Updater Status: Not running"}
-      </span>
     </div>
   );
 }

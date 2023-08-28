@@ -43,7 +43,7 @@ function ScreenReaderButton() {
   };
 
   return (
-    <div>
+    <div className="module-column">
       <button
         className={
           isRunning
@@ -52,13 +52,8 @@ function ScreenReaderButton() {
         }
         onClick={handleButtonClick}
       >
-        {isRunning ? "Stop" : "Start"}
+        {isRunning ? "Stop Whisper Notifications" : "Start Whisper Notifications"}
       </button>
-      <span>
-        {isRunning
-          ? " - Whisper Sensor: Running"
-          : " - Whisper Sensor: Not running"}
-      </span>
     </div>
   );
 }
