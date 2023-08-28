@@ -1,6 +1,7 @@
 import { environment } from "@/environment";
 import { ChangeEvent, useState } from "react";
 import { useEffect } from "react";
+import CSS from 'csstype';
 
 export default function BuyBlock() {
   const [itemName, setItemName] = useState("");
@@ -110,9 +111,22 @@ export default function BuyBlock() {
       false;
   };
 
+
+  const h1Styles: CSS.Properties = {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    position: 'absolute',
+    right: 0,
+    bottom: '2rem',
+    padding: '0.5rem',
+    fontFamily: 'sans-serif',
+    fontSize: '1.5rem',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)'
+  };
+
+
   return (
-    <div className="items-center justify-center p-8 pb-12 rounded-full  bg-black-custom shadow-lg shadow-slate-400">
-      <h1 className="pb-4 text-lg">Purchase New Item:</h1>
+    <div className="items-center justify-center rounded border-2 h-52 aaa bbb">
+      <h1 className="p-4 text-lg">Purchase New Item:</h1>
       <input
         className="text-center py-2 px-4 mb-4 border border-purple-custom-saturated rounded-lg bg-slate-600 text-white-custom"
         type="text"
