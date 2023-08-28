@@ -37,28 +37,24 @@ function LiveScraperButton() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setIsRunning(!isRunning);
       })
       .catch((error) => console.log(error));
   };
 
   return (
-    <div className="p-2">
+    <div className="module-column">
       <button
         className={
           isRunning
-            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
-            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+            ? "button-toggle-on"
+            : "button-toggle-off"
         }
         onClick={handleButtonClick}
       >
-        {isRunning ? "Stop" : "Start"}
+        {isRunning ? "Stop Live Scraper" : "Start Live Scraper"}
       </button>
-      <span>
-        {isRunning
-          ? " - Live Updater Status: Running"
-          : " - Live Updater Status: Not running"}
-      </span>
     </div>
   );
 }

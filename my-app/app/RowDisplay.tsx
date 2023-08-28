@@ -143,76 +143,79 @@ export default function RowDisplay() {
   };
 
   return (
-    <div className="items-center justify-center p-8 pb-12 rounded-lg bg-black-custom shadow-lg shadow-slate-400">
-      <h1 className="pb-4 text-lg">Inventory:</h1>
-      <div className="w-full flex flex-col">
-        <div className="flex font-bold py-2">
-          <div className="w-2/6 px-4">Name:</div>
-          <div className="w-1/6 px-4">Avg Purchase Price:</div>
-          <div className="w-1/6 px-4">Listed Price:</div>
-          <div className="w-1/6 px-4">Number Owned:</div>
-          <div className="w-1/6 px-4">Sell Price:</div>
-        </div>
-        {rows.map((row) => {
-          const textBoxId = `textbox-${row.id}`;
-          const sellButtonId = `button-${row.id}-sell`;
-          const delButtonId = `button-${row.id}-del`;
-          return (
-            <div
-              key={row.id}
-              className="flex items-center border-b border-gray-300 py-2"
-            >
-              <div className="w-2/6 px-4">{row.name}</div>
-              <div className="w-1/6 px-4">{row.purchasePrice}</div>
-              <div className="w-1/6 px-4">{row.listedPrice}</div>
-              <div className="w-1/6 px-4">{row.number}</div>
-              <div className="w-1/6 px-4">
-                <div className="min-w-[100px]">
-                  <input
-                    type="text"
-                    id={textBoxId}
-                    className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
-                  />
-                  <button
-                    onClick={() =>
-                      handleButtonClick(
-                        row.name,
-                        row.purchasePrice,
-                        row.listedPrice,
-                        row.number,
-                        (document.getElementById(textBoxId) as HTMLInputElement)
-                          ?.value,
+    <div className="main-inventory-block">
+      <div className="module-header">Inventory</div>
+      <table className="inventory-grid">
+        <tbody>
+          <tr className="inventory-row">
+            <td className="item column-name">Name:</td>
+            <td className="item column-name">Avg Purchase Price:</td>
+            <td className="item column-name">Listed Price:</td>
+            <td className="item column-name">Number Owned:</td>
+            <td className="item column-name">Sell Item:</td>
+          </tr>
+          {rows.map((row) => {
+            const textBoxId = `textbox-${row.id}`;
+            const sellButtonId = `button-${row.id}-sell`;
+            const delButtonId = `button-${row.id}-del`;
+            return (
+              <tr
+                key={row.id}
+                className="inventory-row"
+              >
+                <td className="item">{row.name}</td>
+                <td className="item">{row.purchasePrice}</td>
+                <td className="item">{row.listedPrice}</td>
+                <td className="item">{row.number}</td>
+                <td className="item">
+                  <div className="min-w-[100px]">
+                    <input
+                      type="text"
+                      id={textBoxId}
+                      className="text-center py-1 px-2 w-12 border border-purple-custom-saturated rounded-lg bg-slate-600"
+                      placeholder="Sell Price"
+                    />
+                    <button
+                      onClick={() =>
+                        handleButtonClick(
+                          row.name,
+                          row.purchasePrice,
+                          row.listedPrice,
+                          row.number,
+                          (document.getElementById(textBoxId) as HTMLInputElement)
+                            ?.value,
                           sellButtonId
-                      )
-                    }
-                    id={sellButtonId}
-                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
-                  >
-                    Sell
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleButtonClick(
-                        row.name,
-                        row.purchasePrice,
-                        row.listedPrice,
-                        row.number,
-                        (document.getElementById(textBoxId) as HTMLInputElement)
-                          ?.value,
+                        )
+                      }
+                      id={sellButtonId}
+                      className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                    >
+                      Sell
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonClick(
+                          row.name,
+                          row.purchasePrice,
+                          row.listedPrice,
+                          row.number,
+                          (document.getElementById(textBoxId) as HTMLInputElement)
+                            ?.value,
                           delButtonId
-                      )
-                    }
-                    id={delButtonId}
-                    className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                        )
+                      }
+                      id={delButtonId}
+                      className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+                    >
+                      Sell (w/o Reporting)
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       {inProg}
     </div>
   );

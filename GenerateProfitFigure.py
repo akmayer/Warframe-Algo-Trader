@@ -168,15 +168,17 @@ def getNetEarningsOverTime(startDate, endDate):
 
     return timestamps, earnings
 
+textColor = "#808080"
+
 def getAccountValueFig(timestamps, inventoryValueOverTime, netEarnings):
-    plt.rcParams['text.color'] = '#E5ECF4'
-    plt.rcParams['axes.labelcolor'] = '#E5ECF4'
-    plt.rcParams['axes.edgecolor'] = '#E5ECF4'
-    plt.rcParams['xtick.color'] = '#E5ECF4'
-    plt.rcParams['ytick.color'] = '#E5ECF4'
+    plt.rcParams['text.color'] = textColor
+    plt.rcParams['axes.labelcolor'] = textColor
+    plt.rcParams['axes.edgecolor'] = textColor
+    plt.rcParams['xtick.color'] = textColor
+    plt.rcParams['ytick.color'] = textColor
     
     # Create a black background
-    plt.rcParams['figure.facecolor'] = '#0A090C'
+    plt.rcParams['figure.facecolor'] = '#0d0a10'
     plt.rcParams['axes.facecolor'] = '#0A090C'
     
     
@@ -194,7 +196,7 @@ def getAccountValueFig(timestamps, inventoryValueOverTime, netEarnings):
     fig.autofmt_xdate()
     ax = plt.gca()
     for spine in ax.spines.values():
-        spine.set_edgecolor('#E5ECF4')
+        spine.set_edgecolor(textColor)
     return fig
 
 startDate = sys.argv[1]
@@ -211,4 +213,4 @@ timestamps, netEarningsOverTime = getNetEarningsOverTime(startDate, endDate)
 t = time.time()
 fig = getAccountValueFig(timestamps, inventoryValueOverTime, netEarningsOverTime)
 #print(time.time() - t)
-fig.savefig("accValue.png")
+fig.savefig("accValue.png", transparent=True)

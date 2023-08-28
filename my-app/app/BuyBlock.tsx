@@ -111,24 +111,11 @@ export default function BuyBlock() {
       false;
   };
 
-
-  const h1Styles: CSS.Properties = {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    position: 'absolute',
-    right: 0,
-    bottom: '2rem',
-    padding: '0.5rem',
-    fontFamily: 'sans-serif',
-    fontSize: '1.5rem',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)'
-  };
-
-
   return (
-    <div className="items-center justify-center rounded border-2 h-52 aaa bbb">
-      <h1 className="p-4 text-lg">Purchase New Item:</h1>
+    <div className="main-buy-block">
+      <div className="module-header">Purchase New Item</div>
       <input
-        className="text-center py-2 px-4 mb-4 border border-purple-custom-saturated rounded-lg bg-slate-600 text-white-custom"
+        className=""
         type="text"
         list="itemNames"
         placeholder="Item Name"
@@ -141,22 +128,22 @@ export default function BuyBlock() {
         ))}
       </datalist>
       <input
-        className="text-center py-2 px-4 mb-4 border border-purple-custom-saturated rounded-lg bg-slate-600 text-white-custom"
+        className=""
         type="text"
         placeholder="Price"
         value={price}
         onChange={(event) => setPrice(event.target.value)}
       />
-      <div className="pt-2">
+      <div className="button-collection">
         <button
-          className="py-2 px-6 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+          className=""
           onClick={() => handleButtonClick("buyButton")}
           id="buyButton"
         >
           Buy
         </button>
         <button
-          className="py-2 px-6 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+          className=""
           onClick={() => handleButtonClick("addButton")}
           id="addButton"
         >

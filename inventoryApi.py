@@ -367,7 +367,11 @@ def create_transaction(t : Transact):
 
 @app.get("/live_scraper")
 def get_live_scraper_status():
-    return {"Running" : config.getConfigStatus("runningLiveScraper")}
+    global liveScraperProcess
+    if liveScraperProcess == None:
+        return {"Running" : False}
+    else:
+        return {"Running" : True}
 
 @app.post("/live_scraper/start")
 def start_live_scraper():
@@ -388,6 +392,7 @@ def stop_live_scraper():
     if liveScraperProcess == None:
         return {"Executed" : False, "Reason" : "Scraper was not running."}
     config.setConfigStatus("runningLiveScraper", False)
+    liveScraperProcess.kill()
     liveScraperProcess.wait()
     liveScraperProcess = None
     return {"Executed": True}

@@ -43,22 +43,17 @@ function ScreenReaderButton() {
   };
 
   return (
-    <div>
+    <div className="module-column">
       <button
         className={
           isRunning
-            ? "p-1 rounded-lg bg-rose-700 text-white-custom shadow-md shadow-rose-700"
-            : "p-1 rounded-lg bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
+          ? "button-toggle-on"
+          : "button-toggle-off"
         }
         onClick={handleButtonClick}
       >
-        {isRunning ? "Stop" : "Start"}
+        {isRunning ? "Stop Whisper Notifications" : "Start Whisper Notifications"}
       </button>
-      <span>
-        {isRunning
-          ? " - Whisper Sensor: Running"
-          : " - Whisper Sensor: Not running"}
-      </span>
     </div>
   );
 }
