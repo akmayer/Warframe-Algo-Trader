@@ -40,7 +40,7 @@ export default function Clock() {
   }, []);
 
   return (
-    <div className="absolute top-4 left-4 text-left">
+    <div className="clock-section">
       <div>GMT: {currentTime}</div>
       <div>Time until midnight GMT: {timeUntilMidnight}</div>
     </div>

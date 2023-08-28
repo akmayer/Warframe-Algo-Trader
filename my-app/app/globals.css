@@ -3,7 +3,7 @@
 @tailwind utilities;*/
 
 :root {
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: "Mona Sans","Mona Sans Header Fallback",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -11,6 +11,45 @@
     color: #0f0f0f;
     background-color: #f6f6f6;
   
+  }
+
+  .clock-section {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+  }
+
+  /* Buy Block Classes: */
+
+  .main-buy-block {
+    outline: 1px solid rgb(168, 126, 166);
+    justify-content: center;
+    text-align: center;
+    margin-left: 10vw;
+    margin-right: 10vw;
+    margin-top: 10vh;
+  }
+
+  .module-header {
+
+  }
+
+  .button-collection {
+
+  }
+
+  /* Inventory Manager Classes: */
+
+  .main-inventory-block {
+    outline: 1px solid rgb(168, 126, 166);
+    text-align: center;
+  }
+
+  .inventory-grid {
+    width: 100%;
+  }
+
+  .inventory-row {
   }
   
 
@@ -26,6 +65,7 @@
     background-color: #ffffff;
     transition: border-color 0.25s;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    margin: 2px;
   }
   
   button:hover {
@@ -42,16 +82,12 @@
       background-color: #2f2f2f;
     }
   
-    a:hover {
-      color: #24c8db;
-    }
-  
     input,
     button {
       color: #ffffff;
       background-color: #0f0f0f98;
     }
     button:active {
-      background-color: #0f0f0f69;
+      background-color: #ffffff;
     }
   }

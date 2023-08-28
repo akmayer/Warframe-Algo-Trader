@@ -143,30 +143,30 @@ export default function RowDisplay() {
   };
 
   return (
-    <div className="items-center justify-center p-8 pb-12 rounded-lg bg-black-custom shadow-lg shadow-slate-400">
-      <h1 className="pb-4 text-lg">Inventory:</h1>
-      <div className="w-full flex flex-col">
-        <div className="flex font-bold py-2">
-          <div className="w-2/6 px-4">Name:</div>
-          <div className="w-1/6 px-4">Avg Purchase Price:</div>
-          <div className="w-1/6 px-4">Listed Price:</div>
-          <div className="w-1/6 px-4">Number Owned:</div>
-          <div className="w-1/6 px-4">Sell Price:</div>
-        </div>
+    <div className="main-inventory-block">
+      <h1 className="module-header">Inventory:</h1>
+      <table className="inventory-grid">
+        <tr className="inventory-row column-names">
+          <td className="item">Name:</td>
+          <td className="item">Avg Purchase Price:</td>
+          <td className="item">Listed Price:</td>
+          <td className="item">Number Owned:</td>
+          <td className="item">Sell Price:</td>
+        </tr>
         {rows.map((row) => {
           const textBoxId = `textbox-${row.id}`;
           const sellButtonId = `button-${row.id}-sell`;
           const delButtonId = `button-${row.id}-del`;
           return (
-            <div
+            <tr
               key={row.id}
-              className="flex items-center border-b border-gray-300 py-2"
+              className="inventory-row"
             >
-              <div className="w-2/6 px-4">{row.name}</div>
-              <div className="w-1/6 px-4">{row.purchasePrice}</div>
-              <div className="w-1/6 px-4">{row.listedPrice}</div>
-              <div className="w-1/6 px-4">{row.number}</div>
-              <div className="w-1/6 px-4">
+              <td className="item">{row.name}</td>
+              <td className="item">{row.purchasePrice}</td>
+              <td className="item">{row.listedPrice}</td>
+              <td className="item">{row.number}</td>
+              <td className="item">
                 <div className="min-w-[100px]">
                   <input
                     type="text"
@@ -205,14 +205,14 @@ export default function RowDisplay() {
                     id={delButtonId}
                     className="py-1 px-2 rounded-md bg-purple-custom-saturated text-white-custom shadow-md shadow-purple-700"
                   >
-                    Delete
+                    Sell (w/o Reporting)
                   </button>
                 </div>
-              </div>
-            </div>
+              </td>
+            </tr>
           );
         })}
-      </div>
+      </table>
       {inProg}
     </div>
   );
