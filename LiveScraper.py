@@ -32,7 +32,12 @@ def getBuySellOverlap():
     try:
         df = pd.read_csv("allItemDataBackup.csv")
     except FileNotFoundError:
-        df = pd.read_csv("allItemData.csv")
+        try:
+            df = pd.read_csv("allItemData.csv")
+        except FileNotFoundError:
+            config.setConfigStatus("runningLiveScraper", False)
+            customLogger.writeTo("orderTracker.log", f"LiveScraper Stopped. No file called allItemData.csv or allItemDataBackup.csv found. Let the Stats Scraper run to completion")
+            raise Exception("LiveScraper Stopped. No file called allItemData.csv or allItemDataBackup.csv found. Let the Stats Scraper run to completion.")
 
     #volFilter = 15
     #rangeFilter = 10

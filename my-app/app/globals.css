@@ -93,6 +93,7 @@
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     background-color: #ded1e4;
+    border-top: 2px solid #ece3f0;
   }
 
   .column-name {
@@ -182,6 +183,7 @@
 
     .inventory-summary {
       background: #1c1622;
+      border-top: 2px solid rgb(73, 56, 80);
     }
 
   }
