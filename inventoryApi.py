@@ -15,6 +15,7 @@ import subprocess
 import io
 import time
 from fastapi.responses import StreamingResponse
+from AccessingWFMarket import *
 
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
@@ -152,7 +153,7 @@ async def addItem(item : Item):
         con.close()
         aggregate_and_delete_rows_by_name(item.name)
         return {"Executed" : True}
-    if item.name and item.purchasePrice and item.number:
+    if item.name and item.number:
         cur.execute("INSERT INTO inventory (name, purchasePrice, number) VALUES(?,?,?)", [item.name, item.purchasePrice, item.number])
         con.commit()
         con.close()
@@ -185,7 +186,7 @@ async def updateItem(item : Item):
     cur = con.cursor()
     alreadyExists = cur.execute(f"SELECT COUNT(name) FROM inventory WHERE name='{item.name}'").fetchone()
     if alreadyExists[0] != 0:
-        if item.name and item.purchasePrice:
+        if item.name:
             cur.execute(f"UPDATE inventory SET purchasePrice=?, number=?, listedPrice=? WHERE name=?", [item.purchasePrice, item.number, item.listedPrice, item.name])
             con.commit()
             con.close()
@@ -215,7 +216,7 @@ async def sellItem(item : Item):
         con.close()
         return {"Executed" : False, "Reason": "Item not in database."}
 
-def get_order_id(t : Transact):
+def get_order_data(t : Transact):
     url = f"https://api.warframe.market/v1/profile/{config.inGameName}/orders"
 
     headers = {
@@ -235,13 +236,13 @@ def get_order_id(t : Transact):
 
         for order in orders:
             if order["item"]["url_name"] == t.name:
-                return order["id"]
+                return order["id"], order['platinum'], order["quantity"]
 
         # If no matching order found
-        return None
+        return None, None, None
 
     # If API call failed
-    return None
+    return None, None, None
 
 @app.put("/market/delete")
 def delete_order(t : Transact):
@@ -253,7 +254,7 @@ def delete_order(t : Transact):
         return {"message": "Not deleting order since you have may of these left"}
     
     # Make the DELETE API call
-    order_id = get_order_id(t)
+    order_id, order_plat, order_quant = get_order_data(t)
 
     time.sleep(0.33)
     
@@ -289,12 +290,18 @@ def delete_order(t : Transact):
 def close_order(t : Transact):
     logging.error(t.name)
     # Make the DELETE API call
-    order_id = get_order_id(t)
+    order_id, order_plat, order_quant = get_order_data(t)
 
     time.sleep(0.33)
     
     if order_id is None:
         return {"message": "Order not found"}
+
+
+    if order_plat != t.price:
+        updateListing(order_id, t.price, order_quant, True, t.name, t.transaction_type)
+        time.sleep(0.33)
+
 
     close_url = f"https://api.warframe.market/v1/profile/orders/close/{order_id}"
     

@@ -5,6 +5,7 @@ import CSS from 'csstype';
 
 export default function BuyBlock() {
   const [itemName, setItemName] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
 
@@ -23,11 +24,19 @@ export default function BuyBlock() {
     setItemName(formattedInputValue);
   };
 
-  const handleButtonClick = (buttonId : string) => {
+  const handleButtonClick = (buttonId : string) => {  
     if (itemName === "" || price === "" || isNaN(Number(price))) {
-      // Check if either textbox is empty or price is not a number
+      console.log(price);
+      console.log(Number(price));
+      console.log(isNaN(Number(price)));
       return;
     }
+
+    var defaultQuantity = quantity;
+    if (quantity === "") {
+      defaultQuantity = "1";
+    }
+
 
     const formattedItemName = itemName.replace(/\s+/g, "_").toLowerCase();
 
@@ -39,7 +48,7 @@ export default function BuyBlock() {
     const itemData = {
       name: formattedItemName,
       purchasePrice: price,
-      number: 1,
+      number: defaultQuantity,
     };
     (document.getElementById(buttonId) as HTMLButtonElement)!.disabled = true;
 
@@ -97,6 +106,7 @@ export default function BuyBlock() {
             // Reset input values
             setItemName("");
             setPrice("");
+            setQuantity("");
 
             //window.location.reload();
           })
@@ -106,6 +116,7 @@ export default function BuyBlock() {
 
     setItemName("");
     setPrice("");
+    setQuantity("");
 
     (document.getElementById(buttonId) as HTMLButtonElement)!.disabled =
       false;
@@ -127,6 +138,13 @@ export default function BuyBlock() {
           <option key={name} value={name} />
         ))}
       </datalist>
+      <input
+        className=""
+        type="text"
+        placeholder="Quantity"
+        value={quantity}
+        onChange={(event) => setQuantity(event.target.value)}
+      />
       <input
         className=""
         type="text"
