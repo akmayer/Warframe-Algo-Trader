@@ -80,7 +80,7 @@ const GraphGen: React.FC = () => {
       >
         Load Graph
       </button>
-
+      <br></br>
       {imageElement}
     </div>
   );

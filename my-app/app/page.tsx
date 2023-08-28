@@ -78,7 +78,7 @@ export default function Home() {
         <br></br>
         <RowDisplay />
         <br></br>
-        <div className="p-4 rounded-md  bg-black-custom">
+        <div className="inventory-summary">
           Total Purchase Price: {itemTotals.total_purchase_price}
           <br />
           Total Listed Price: {itemTotals.total_listed_price}
@@ -86,9 +86,9 @@ export default function Home() {
       </div>
 
       <div className="visuals-block">
-        <h1 className="text-center font-semibold p-12 text-4xl">
+        <div className="module-header">
             Visualizations
-          </h1>
+        </div>
         <GraphGen />
       </div>
 

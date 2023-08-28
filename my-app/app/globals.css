@@ -25,7 +25,7 @@
   }
 
   .clock-section {
-    position: absolute;
+    position: fixed;
     bottom: 1px;
     right: 1px;
     text-align: right;
@@ -35,6 +35,9 @@
   .main-module-control-block {
     text-align: center;
     outline:1px solid rgb(0, 0, 0);
+    position:fixed;
+    top: 0px;
+    height: 80px;
   }
 
   .module-row {
@@ -59,7 +62,7 @@
     outline: 1px solid rgb(168, 126, 166);
     justify-content: center;
     text-align: center;
-    margin-top: 10vh;
+    margin-top: 80px;
     padding-top: 10px;
     padding-bottom: 10px;
   }
@@ -87,6 +90,15 @@
 
   .inventory-row {
 
+  }
+
+  .inventory-summary {
+    text-align: center;
+  }
+
+  .visuals-block {
+    text-align: center;
+    margin-top: 50px;
   }
   
 
