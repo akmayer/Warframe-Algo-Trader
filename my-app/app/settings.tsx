@@ -75,6 +75,19 @@ export default function Settings() {
   }
 
   const saveList = () => {
+    console.log("Selected before saving", selectedItems);
+    if (displayingBlacklist) {
+      setSettings(prevState => ({
+        ...prevState,
+        "blacklistedItems" : selectedItems
+    }));;
+    }
+    if (displayingWhitelist) {
+      setSettings(prevState => ({
+        ...prevState,
+        "whitelistedItems" : selectedItems
+    }));;
+    }
     setDisplayingBlacklist(false);
     setDisplayingWhitelist(false);
     setListSaved(true);
