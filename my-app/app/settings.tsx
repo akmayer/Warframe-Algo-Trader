@@ -8,6 +8,9 @@ export default function Settings() {
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [unselectedItems, setUnselectedItems] = useState<string[]>([]);
+  const [displayingBlacklist, setDisplayingBlacklist] = useState<boolean>(true);
+  const [displayingWhitelist, setDisplayingWhitelist] = useState<boolean>(false);
+  const [listSaved, setListSaved] = useState<boolean>(true);
 
   useEffect(() => {
     fetch(`${environment.API_BASE_URL}/all_items`)
@@ -39,8 +42,8 @@ export default function Settings() {
   return (
     <div className="settings-popup">  
       <div className="settings-scroll">
-        <div className="settings-row">
-          Input Settings
+        <div className="settings-row module-header">
+          Settings
         </div>
 
         <div className="settings-row">
@@ -89,7 +92,7 @@ export default function Settings() {
           </div>
         </div>
 
-        <div className="settings-row">
+        {listSaved && <div className="settings-row">
           <div className="flex-element">
             <button>
             Edit Blacklist
@@ -100,9 +103,27 @@ export default function Settings() {
             Edit Whitelist
             </button>
           </div>
-        </div>
+        </div>}
         
-        <div className="list-container">
+        {(displayingBlacklist || displayingWhitelist) && <div className="list-container">
+          <div className="settings-row">
+            {displayingBlacklist && <div className="flex-element">Editing Blacklist</div>}
+            {displayingWhitelist && <div className="flex-element">Editing Whitelist</div>}
+          </div>
+
+          <div className="settings-row">
+            <div className="flex-element">
+              <button>
+              Discard
+              </button>
+            </div>
+            <div className="flex-element">
+              <button>
+              Save
+              </button>
+            </div>
+          </div>
+
           <div className="settings-row">
             <div className="flex-element">
               <input />
@@ -134,10 +155,8 @@ export default function Settings() {
               ))}
             </div>
           </div>
-        </div>
-
-        
-        
+        </div>}
+  
       </div>
     </div>
   );
