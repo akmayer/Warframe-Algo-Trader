@@ -469,4 +469,10 @@ def write_graph_to_file(startDate : str | None = None, endDate : str | None = No
 
     # Return the BytesIO object as a StreamingResponse with the appropriate media type
     return StreamingResponse(buffer, media_type="image/png")
+
+@app.get("/settings")
+def get_settings():
+    with open('settings.json') as settings:
+        data = json.load(settings)
+    return data
     

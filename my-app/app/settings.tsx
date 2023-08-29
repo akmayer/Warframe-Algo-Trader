@@ -12,6 +12,8 @@ export default function Settings() {
   const [displayingWhitelist, setDisplayingWhitelist] = useState<boolean>(false);
   const [listSaved, setListSaved] = useState<boolean>(true);
 
+  const [settings, setSettings] = useState({});
+
   useEffect(() => {
     fetch(`${environment.API_BASE_URL}/all_items`)
       .then((response) => response.json())
@@ -20,11 +22,34 @@ export default function Settings() {
         setUnselectedItems(data.item_names);
       })
       .catch((error) => console.log(error));
+    fetch(`${environment.API_BASE_URL}/settings`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSettings(data);
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   useEffect(() => {
     setUnselectedItems(subtractList(allItemNames, selectedItems));
   }, [selectedItems]);
+
+  useEffect(() => {
+    console.log("S", settings);
+  }, [settings])
+
+  useEffect(() => {
+    console.log(listSaved);
+    if (!listSaved) {
+      if (displayingBlacklist) {
+        console.log(settings["blacklistedItems"]);
+        setSelectedItems(settings["blacklistedItems"]);
+      }
+      else if (displayingWhitelist) {
+        setSelectedItems(settings["whitelistedItems"]);
+      }
+    }
+  }, [listSaved])
 
 
   const subtractList = (largerList: string[], smallerList: string[]) => {
