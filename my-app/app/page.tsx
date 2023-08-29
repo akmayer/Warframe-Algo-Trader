@@ -11,6 +11,8 @@ import StatsScraperButton from "./StatsScraperButton";
 import ScreenReaderButton from "./ScreenReaderButton";
 import GraphGen from "./GraphGen";
 import { environment } from "@/environment";
+import settingsLogo from "./assets/settings.png";
+import Settings from './settings';
 
 interface ItemTotals {
   total_purchase_price: number;
@@ -31,11 +33,19 @@ async function fetchItemTotals(): Promise<ItemTotals> {
   }
 }
 
+
+
 export default function Home() {
   const [itemTotals, setItemTotals] = useState<ItemTotals>({
     total_purchase_price: 0,
     total_listed_price: 0,
   });
+
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
+
+  const toggleSettingsVisibility = () => {
+    setIsSettingsVisible(prevState => !prevState);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,6 +77,10 @@ export default function Home() {
         </div>
       </div>
 
+      <div className="settings-container">
+        <a><img src={settingsLogo.src} alt="Settings" className="settings-logo" onClick={toggleSettingsVisibility}/></a>
+      </div>
+
       <div className="inventory-manager">
         
         {/*
@@ -90,6 +104,8 @@ export default function Home() {
         </div>
         <GraphGen />
       </div>
+
+      {isSettingsVisible && <Settings/>}
 
     </div>
    

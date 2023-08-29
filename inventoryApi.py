@@ -37,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+itemNameList = []
 
 class Item(BaseModel):
     name:str
@@ -115,10 +116,12 @@ async def root():
 
 @app.get("/all_items")
 async def get_a_list_of_names_of_all_tradable_items():
-    allItemsLink = "https://api.warframe.market/v1/items"
-    r = requests.get(allItemsLink)
-    itemList = r.json()["payload"]["items"]
-    itemNameList = [x["url_name"] for x in itemList]
+    global itemNameList
+    if len(itemNameList) == 0:
+        allItemsLink = "https://api.warframe.market/v1/items"
+        r = requests.get(allItemsLink)
+        itemList = r.json()["payload"]["items"]
+        itemNameList = sorted([x["url_name"] for x in itemList])
     return {"item_names" : itemNameList}
 
 @app.get("/items")

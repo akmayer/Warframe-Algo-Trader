@@ -17,7 +17,6 @@ export default function RowDisplay() {
   useEffect(() => {
     // Fetch data from the REST API
     const interval = setInterval(() => {
-      console.log("ping");
       fetch(`${environment.API_BASE_URL}/items`)
         .then((response) => response.json())
         .then((data) => setRows(data))
