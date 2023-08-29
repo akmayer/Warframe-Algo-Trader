@@ -101,19 +101,42 @@ export default function Settings() {
             </button>
           </div>
         </div>
-
-        <div className="settings-row">
-          <div className="list flex-element">
-            {unselectedItems.map((name) => (
-              <div onClick={(e) => {addToList(name)}}>{name}</div>
-            ))}
+        
+        <div className="list-container">
+          <div className="settings-row">
+            <div className="flex-element">
+              <input />
+            </div>
+            <div className="flex-element">
+              <button>
+              Push filtered onto list -&gt;
+              </button>
+            </div>
+            <div className="flex-element">
+              <button>
+              &lt;- Remove filtered off list
+              </button>
+            </div>
+            <div className="flex-element">
+              <input />
+            </div>
           </div>
-          <div className="list flex-element">
-            {selectedItems.map((name) => (
-              <div onClick={(e) => {removeFromList(name)}}>{name}</div>
-            ))}
+
+          <div className="settings-row">
+            <div className="list flex-element">
+              {unselectedItems.map((name) => (
+                <div className="list-element" onClick={(e) => {addToList(name)}}>{name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
+              ))}
+            </div>
+            <div className="list flex-element">
+              {selectedItems.map((name) => (
+                <div className="list-element" onClick={(e) => {removeFromList(name)}}>{name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
+              ))}
+            </div>
           </div>
         </div>
+
+        
         
       </div>
     </div>

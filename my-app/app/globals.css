@@ -300,6 +300,10 @@
       background-color: rgb(73, 56, 80);
     }
 
+    .list-element:nth-child(even) {
+      background-color: rgb(73, 56, 80);
+    }
+
     .inventory-summary {
       background: #1c1622;
       border-top: 2px solid rgb(73, 56, 80);
