@@ -8,7 +8,7 @@ export default function Settings() {
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [unselectedItems, setUnselectedItems] = useState<string[]>([]);
-  const [displayingBlacklist, setDisplayingBlacklist] = useState<boolean>(true);
+  const [displayingBlacklist, setDisplayingBlacklist] = useState<boolean>(false);
   const [displayingWhitelist, setDisplayingWhitelist] = useState<boolean>(false);
   const [listSaved, setListSaved] = useState<boolean>(true);
 
@@ -38,6 +38,30 @@ export default function Settings() {
   const removeFromList = (name: string) => {
     setSelectedItems(subtractList(selectedItems, [name]));
   }
+
+  const toggleShowBlacklist = () => {
+    setDisplayingBlacklist(true);
+    setListSaved(false);
+  }
+
+  const toggleShowWhitelist = () => {
+    setDisplayingWhitelist(true);
+    setListSaved(false);
+  }
+
+  const saveList = () => {
+    setDisplayingBlacklist(false);
+    setDisplayingWhitelist(false);
+    setListSaved(true);
+  }
+
+  const discardList = () => {
+    setDisplayingBlacklist(false);
+    setDisplayingWhitelist(false);
+    setListSaved(true);
+  }
+
+
 
   return (
     <div className="settings-popup">  
@@ -94,12 +118,12 @@ export default function Settings() {
 
         {listSaved && <div className="settings-row">
           <div className="flex-element">
-            <button>
+            <button onClick={toggleShowBlacklist}>
             Edit Blacklist
             </button>
           </div>
           <div className="flex-element">
-            <button>
+            <button onClick={toggleShowWhitelist}>
             Edit Whitelist
             </button>
           </div>
@@ -113,12 +137,12 @@ export default function Settings() {
 
           <div className="settings-row">
             <div className="flex-element">
-              <button>
+              <button onClick={discardList}>
               Discard
               </button>
             </div>
             <div className="flex-element">
-              <button>
+              <button onClick={saveList}>
               Save
               </button>
             </div>
