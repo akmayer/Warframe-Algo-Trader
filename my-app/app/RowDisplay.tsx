@@ -73,7 +73,7 @@ export default function RowDisplay() {
 
     if (lastPart === "del") {
       // Perform specific action for "del"
-      apiEndpoint = `${environment.API_BASE_URL}/market/remove`;
+      apiEndpoint = `${environment.API_BASE_URL}/market/delete`;
       console.log("Button with id", buttonId, "clicked. Action: 'del'");
       // Your action for "del" goes here
     } else {
