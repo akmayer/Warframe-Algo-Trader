@@ -369,7 +369,6 @@ def create_transaction(t : Transact):
     """)
 
     # Insert the transaction into the table
-    logging.error(t.number)
     for x in range(t.number):
         cursor.execute("INSERT INTO transactions (name, datetime, transactionType, price) VALUES (?, ?, ?, ?)",
                     (t.name, datetime.now(), t.transaction_type, t.price))
