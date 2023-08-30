@@ -58,8 +58,14 @@ const Settings: React.FC<SettingsProps> = ({ onShow }) => {
 
   useEffect(() => {
     console.log("Set", settings);
-    document.getElementById("strictWhitelist").checked = settings["strictWhitelist" as keyof {}];
-    document.getElementById("pingOnNotif").checked = settings["pingOnNotif" as keyof {}];
+    const whitelistCheckbox = document.getElementById("strictWhitelist") as HTMLInputElement | null;
+    if (whitelistCheckbox) {
+      whitelistCheckbox.checked = settings["strictWhitelist" as keyof {}];
+    }
+    const pingCheckbox = document.getElementById("pingOnNotif") as HTMLInputElement | null;
+    if (pingCheckbox) {
+      pingCheckbox.checked = settings["pingOnNotif" as keyof {}];
+    }
   }, [settings])
 
   useEffect(() => {
@@ -122,13 +128,19 @@ const Settings: React.FC<SettingsProps> = ({ onShow }) => {
 
   const pushToSelected = () => {
     setSelectedItems(selectedItems.concat(filteredUnselected));
-    document.getElementById("filter-unselect").value="";
+    const filterElement = document.getElementById("filter-unselect") as HTMLInputElement | null;
+    if (filterElement) {
+      filterElement.value = "";
+    }
     setFilterStringUnsel("");
   }
 
   const pushToUnselected = () => {
     setSelectedItems(subtractList(selectedItems, filteredSelected));
-    document.getElementById("filter-select").value="";
+    const filterElement = document.getElementById("filter-select") as HTMLInputElement | null;
+    if (filterElement) {
+      filterElement.value = "";
+    }
     setFilterStringSel("");
   }
 
@@ -311,23 +323,25 @@ const Settings: React.FC<SettingsProps> = ({ onShow }) => {
               <input 
               type="text"
               id="filter-unselect"
+              placeholder="Filter Unlisted"
               onChange={(event) => setFilterStringUnsel(event.target.value.replace(/\s+/g, "_").toLowerCase())}/>
             </div>
             <div className="flex-element">
               <button
               onClick={pushToSelected}>
-              Push filtered onto list -&gt;
+              Push all filtered to list -&gt;
               </button>
             </div>
             <div className="flex-element">
               <button
               onClick={pushToUnselected}>
-              &lt;- Remove filtered off list
+              &lt;- Push all filtered off list
               </button>
             </div>
             <div className="flex-element">
               <input
               id="filter-select"
+              placeholder="Filter Listed"
               onChange={(event) => setFilterStringSel(event.target.value.replace(/\s+/g, "_").toLowerCase())}/>
             </div>
           </div>

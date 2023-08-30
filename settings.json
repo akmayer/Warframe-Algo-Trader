@@ -1,9 +1,6 @@
 {
-    "blacklistedItems": [
-    ],
-    "whitelistedItems": [
-        
-    ],
+    "blacklistedItems": [],
+    "whitelistedItems": [],
     "strictWhitelist": false,
     "priceShiftThreshold": -1,
     "avgPriceCap": 600,
