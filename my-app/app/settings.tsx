@@ -8,6 +8,13 @@ export default function Settings() {
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [unselectedItems, setUnselectedItems] = useState<string[]>([]);
+
+  const [filteredSelected, setFilteredSelected] = useState<string[]>([]);
+  const [filteredUnselected, setFilteredUnselected] = useState<string[]>([]);
+  const [filterStringSel, setFilterStringSel] = useState<string>("");
+  const [filterStringUnsel, setFilterStringUnsel] = useState<string>("");
+
+
   const [displayingBlacklist, setDisplayingBlacklist] = useState<boolean>(false);
   const [displayingWhitelist, setDisplayingWhitelist] = useState<boolean>(false);
   const [listSaved, setListSaved] = useState<boolean>(true);
@@ -35,11 +42,6 @@ export default function Settings() {
   }, [selectedItems]);
 
   useEffect(() => {
-    console.log("S", settings);
-  }, [settings])
-
-  useEffect(() => {
-    console.log(listSaved);
     if (!listSaved) {
       if (displayingBlacklist) {
         console.log(settings["blacklistedItems" as keyof {}]);
@@ -50,6 +52,20 @@ export default function Settings() {
       }
     }
   }, [listSaved])
+
+  useEffect(() => {
+    console.log("Set", settings);
+    document.getElementById("strictWhitelist").checked = settings["strictWhitelist" as keyof {}];
+    document.getElementById("pingOnNotif").checked = settings["pingOnNotif" as keyof {}];
+  }, [settings])
+
+  useEffect(() => {
+    setFilteredUnselected(unselectedItems.filter(item => item.includes(filterStringUnsel)));
+  }, [filterStringUnsel, unselectedItems])
+
+  useEffect(() => {
+    setFilteredSelected(selectedItems.filter(item => item.includes(filterStringSel)));
+  }, [filterStringSel, selectedItems])
 
 
   const subtractList = (largerList: string[], smallerList: string[]) => {
@@ -80,13 +96,13 @@ export default function Settings() {
       setSettings(prevState => ({
         ...prevState,
         "blacklistedItems" : selectedItems
-    }));;
+    }));
     }
     if (displayingWhitelist) {
       setSettings(prevState => ({
         ...prevState,
         "whitelistedItems" : selectedItems
-    }));;
+    }));
     }
     setDisplayingBlacklist(false);
     setDisplayingWhitelist(false);
@@ -101,11 +117,26 @@ export default function Settings() {
     setListSaved(true);
   }
 
+  const pushToSelected = () => {
+    setSelectedItems(selectedItems.concat(filteredUnselected));
+    document.getElementById("filter-unselect").value="";
+    setFilterStringUnsel("");
+  }
+
+  const pushToUnselected = () => {
+    setSelectedItems(subtractList(selectedItems, filteredSelected));
+    document.getElementById("filter-select").value="";
+    setFilterStringSel("");
+  }
+
 
 
   return (
     <div className="settings-popup">  
       <div className="settings-scroll">
+        <div>
+          TEST
+        </div>
         <div className="settings-row module-header">
           Settings
         </div>
@@ -113,34 +144,80 @@ export default function Settings() {
         <div className="settings-row">
           <div className="flex-element">
             Price Shift Threshold:
-            <input />
+            <input
+            type="number"
+            id="priceShiftThreshold"
+            defaultValue={settings["priceShiftThreshold" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "priceShiftThreshold" : +event.target.value
+            }))}
+            />
           </div>
           <div className="flex-element">
             Volume Threshold:
-            <input />
+            <input
+            type="number"
+            id="volumeThreshold"
+            defaultValue={settings["volumeThreshold" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "volumeThreshold" : +event.target.value
+            }))}
+            />
           </div>
         </div>
 
         <div className="settings-row">
           <div className="flex-element">
             Range Threshold:
-            <input />
+            <input 
+            type="number"
+            id="rangeThreshold"
+            defaultValue={settings["rangeThreshold" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "rangeThreshold" : +event.target.value
+            }))}
+            />
           </div>
           <div className="flex-element">
             Avg. Price Cap:
-            <input />
+            <input 
+            type="number"
+            id="avgPriceCap"
+            defaultValue={settings["avgPriceCap" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "avgPriceCap" : +event.target.value
+            }))}
+            />
           </div>
         </div>
 
         <div className="settings-row">
           <div className="flex-element">
             Max Total Plat Cap:
-            <input />
+            <input 
+            type="number"
+            id="maxTotalPlatCap"
+            defaultValue={settings["maxTotalPlatCap" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "maxTotalPlatCap" : +event.target.value
+            }))}
+            />
           </div>
           <div className="flex-element">
             Strict Whitelist:
             <label className="switch">
-              <input type="checkbox" />
+              <input 
+              type="checkbox"
+              onClick={() => setSettings(prevState => ({
+                ...prevState,
+                "strictWhitelist" : !prevState["strictWhitelist" as keyof {}]
+              }))}
+              id="strictWhitelist"/>
               <span className="slider round" />
             </label>
           </div>
@@ -150,7 +227,13 @@ export default function Settings() {
           <div className="flex-element">
             Ping On Notif: 
             <label className="switch">
-              <input type="checkbox" />
+              <input 
+              type="checkbox"
+              onClick={() => setSettings(prevState => ({
+                ...prevState,
+                "pingOnNotif" : !prevState["pingOnNotif" as keyof {}]
+              }))}
+              id="pingOnNotif"/>
               <span className="slider round" />
             </label>
           </div>
@@ -178,43 +261,50 @@ export default function Settings() {
           <div className="settings-row">
             <div className="flex-element">
               <button onClick={discardList}>
-              Discard
+              Discard Changes
               </button>
             </div>
             <div className="flex-element">
               <button onClick={saveList}>
-              Save
+              Save Changes (w/o writing to json)
               </button>
             </div>
           </div>
 
           <div className="settings-row">
             <div className="flex-element">
-              <input />
+              <input 
+              type="text"
+              id="filter-unselect"
+              onChange={(event) => setFilterStringUnsel(event.target.value.replace(/\s+/g, "_").toLowerCase())}/>
             </div>
             <div className="flex-element">
-              <button>
+              <button
+              onClick={pushToSelected}>
               Push filtered onto list -&gt;
               </button>
             </div>
             <div className="flex-element">
-              <button>
+              <button
+              onClick={pushToUnselected}>
               &lt;- Remove filtered off list
               </button>
             </div>
             <div className="flex-element">
-              <input />
+              <input
+              id="filter-select"
+              onChange={(event) => setFilterStringSel(event.target.value.replace(/\s+/g, "_").toLowerCase())}/>
             </div>
           </div>
 
           <div className="settings-row">
             <div className="list flex-element">
-              {unselectedItems.map((name) => (
+              {filteredUnselected.map((name) => (
                 <div className="list-element" onClick={(e) => {addToList(name)}}>{name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
               ))}
             </div>
             <div className="list flex-element">
-              {selectedItems.map((name) => (
+              {filteredSelected.map((name) => (
                 <div className="list-element" onClick={(e) => {removeFromList(name)}}>{name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
               ))}
             </div>
