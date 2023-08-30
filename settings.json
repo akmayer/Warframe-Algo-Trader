@@ -1,11 +1,15 @@
 {
-    "blacklistedItems": [],
-    "whitelistedItems": [],
-    "strictWhitelist": false,
-    "priceShiftThreshold": -1,
-    "avgPriceCap": 600,
+    "blacklistedItems" : [
+
+    ],
+    "whitelistedItems" : [
+        
+    ],
+    "strictWhitelist" : false,
+    "priceShiftThreshold" : -1,
+    "avgPriceCap" : 600,
     "maxTotalPlatCap": 100000,
-    "volumeThreshold": 15,
-    "rangeThreshold": 10,
-    "pingOnNotif": true
+    "volumeThreshold" : 15,
+    "rangeThreshold" : 10,
+    "pingOnNotif" : true
 }

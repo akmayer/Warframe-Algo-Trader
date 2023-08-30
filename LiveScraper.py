@@ -447,7 +447,7 @@ if r.status_code == 401:
     raise Exception(f"Invalid JWT Token")
 
 settings = readSettings()
-deleteAllOrders(settings)
+#deleteAllOrders(settings)
 interestingItems = list(buySellOverlap.index)
 
 try:
@@ -467,6 +467,7 @@ try:
         
 
         currentOrders = getOrders()
+
         myBuyOrdersDF = pd.DataFrame.from_dict(currentOrders["buy_orders"])
         if myBuyOrdersDF.shape[0] != 0:
             myBuyOrdersDF["url_name"] = myBuyOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
@@ -481,7 +482,16 @@ try:
         interestingItems += settings["whitelistedItems"]
         interestingItems += inventoryNames
 
+
         interestingItems = list(set(interestingItems))
+
+        items = currentOrders["sell_orders"] + currentOrders["buy_orders"]
+        item_info = []
+        for item in items:
+            url_name = item["item"]["url_name"]
+            if not ignoreItems(url_name, settings):
+                if url_name not in interestingItems:
+                    deleteOrder(item["id"])
         
         logging.debug("Interesting Items:\n" + ", ".join(interestingItems).replace("_", " ").title())
         customLogger.writeTo("orderTracker.log", f"Interesting Items (Post-Whitelist):{' '.join(interestingItems)}")

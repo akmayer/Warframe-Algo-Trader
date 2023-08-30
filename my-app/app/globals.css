@@ -172,6 +172,7 @@
     left: 10vw;
     height: 90vh;
     width: 80vw;
+    background-color: #ece3f0;
   }
 
   .settings-scroll {
@@ -274,6 +275,22 @@
     text-align: right;
   }
 
+  .list-element {
+    cursor: pointer;
+    background-color: #ece3f0;
+    border-radius: 5px;
+  }
+
+  .list-element:nth-child(odd) {
+    background-color: #e1cfe9;
+  }
+
+  .list-element:hover {
+    filter: hue-rotate(-30deg);
+    border: 2px solid;
+    border-color: #bd3ed6;
+  }
+
 
   @media (prefers-color-scheme: dark) {
     :root {
@@ -312,10 +329,6 @@
       background-color: rgb(73, 56, 80);
     }
 
-    .list-element:nth-child(even) {
-      background-color: rgb(73, 56, 80);
-    }
-
     .inventory-summary {
       background: #1c1622;
       border-top: 2px solid rgb(73, 56, 80);
@@ -324,5 +337,14 @@
     .settings-popup {
       background: #1c1622;
     }
+
+    .list-element {
+      background-color: #1c1622;
+    }
+  
+    .list-element:nth-child(odd) {
+      background-color: rgb(73, 56, 80);
+    }
+
 
   }
