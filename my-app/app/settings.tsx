@@ -3,10 +3,11 @@
 import { environment } from "@/environment";
 import { ChangeEvent, useState, useEffect } from "react";
 
+interface SettingsProps {
+  onShow: () => void; // Replace `void` with the actual return type if needed
+}
 
-export default function Settings({
-  onShow
-}) {
+const Settings: React.FC<SettingsProps> = ({ onShow }) => {
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [unselectedItems, setUnselectedItems] = useState<string[]>([]);
@@ -349,3 +350,5 @@ export default function Settings({
     </div>
   );
 }
+
+export default Settings;
