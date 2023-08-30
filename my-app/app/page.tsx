@@ -62,6 +62,7 @@ export default function Home() {
     };
   }, []);
 
+
   return (
     <div className="">
       <Clock />
@@ -105,7 +106,7 @@ export default function Home() {
         <GraphGen />
       </div>
 
-      {isSettingsVisible && <Settings/>}
+      {isSettingsVisible && <Settings onShow={() => setIsSettingsVisible(false)}/>}
 
     </div>
    

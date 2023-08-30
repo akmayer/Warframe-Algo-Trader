@@ -4,7 +4,9 @@ import { environment } from "@/environment";
 import { ChangeEvent, useState, useEffect } from "react";
 
 
-export default function Settings() {
+export default function Settings({
+  onShow
+}) {
   const [allItemNames, setAllItemNames] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [unselectedItems, setUnselectedItems] = useState<string[]>([]);
@@ -159,7 +161,8 @@ export default function Settings() {
         </div>
         <div className="settings-row">
           <div className="half-wide right">
-            <button>
+            <button
+            onClick={onShow}>
             Discard
             </button>
           </div>
