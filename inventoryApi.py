@@ -50,6 +50,7 @@ class Transact(BaseModel):
     name:str
     transaction_type:str
     price:float | None = None
+    number:int | None = 1
 
 
 def receive_signal(signalNumber, frame):
@@ -368,8 +369,11 @@ def create_transaction(t : Transact):
     """)
 
     # Insert the transaction into the table
-    cursor.execute("INSERT INTO transactions (name, datetime, transactionType, price) VALUES (?, ?, ?, ?)",
-                   (t.name, datetime.now(), t.transaction_type, t.price))
+    logging.error(t.number)
+    for x in range(t.number):
+        cursor.execute("INSERT INTO transactions (name, datetime, transactionType, price) VALUES (?, ?, ?, ?)",
+                    (t.name, datetime.now(), t.transaction_type, t.price))
+        time.sleep(0.0001)
 
     conn.commit()
     conn.close()

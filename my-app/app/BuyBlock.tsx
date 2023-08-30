@@ -89,6 +89,7 @@ export default function BuyBlock() {
           name: formattedItemName,
           transaction_type: "buy",
           price: price,
+          number: defaultQuantity
         };
 
         fetch(`${environment.API_BASE_URL}/transaction`, {
@@ -148,7 +149,7 @@ export default function BuyBlock() {
       <input
         className=""
         type="text"
-        placeholder="Price"
+        placeholder="Price Per Item"
         value={price}
         onChange={(event) => setPrice(event.target.value)}
       />
