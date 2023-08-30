@@ -447,7 +447,7 @@ if r.status_code == 401:
     raise Exception(f"Invalid JWT Token")
 
 settings = readSettings()
-#deleteAllOrders(settings)
+deleteAllOrders(settings)
 interestingItems = list(buySellOverlap.index)
 
 try:
