@@ -162,7 +162,7 @@ export default function RowDisplay() {
                 key={row.id}
                 className="inventory-row"
               >
-                <td className="item">{row.name}</td>
+                <td className="item">{row.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</td>
                 <td className="item">{(Math.round(row.purchasePrice * 100) / 100).toFixed(2)}</td>
                 <td className="item">{row.listedPrice}</td>
                 <td className="item">{row.number}</td>

@@ -21,7 +21,7 @@ export default function BuyBlock() {
   const handleItemNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     const formattedInputValue = inputValue.replace(/\s+/g, "_");
-    setItemName(formattedInputValue);
+    setItemName(inputValue);
   };
 
   const handleButtonClick = (buttonId : string) => {  
@@ -135,7 +135,7 @@ export default function BuyBlock() {
       />
       <datalist id="itemNames">
         {allItemNames.map((name) => (
-          <option key={name} value={name} />
+          <option key={name} value={name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} />
         ))}
       </datalist>
       <input

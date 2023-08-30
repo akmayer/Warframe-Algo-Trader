@@ -165,7 +165,7 @@
   }
 
   .settings-popup {
-    outline: 1px solid red;
+    outline: 1px solid #d30bfc;
     text-align: center;
     position: fixed;
     top: 5vh;

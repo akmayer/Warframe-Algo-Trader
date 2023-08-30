@@ -12,14 +12,14 @@ export default function Settings() {
   const [displayingWhitelist, setDisplayingWhitelist] = useState<boolean>(false);
   const [listSaved, setListSaved] = useState<boolean>(true);
 
-  const [settings, setSettings] = useState({});
+  const [settings, setSettings] = useState<{}>({});
 
   useEffect(() => {
     fetch(`${environment.API_BASE_URL}/all_items`)
       .then((response) => response.json())
       .then((data) => {
         setAllItemNames(data.item_names);
-        setUnselectedItems(data.item_names);
+        setSelectedItems([]);
       })
       .catch((error) => console.log(error));
     fetch(`${environment.API_BASE_URL}/settings`)
@@ -42,11 +42,11 @@ export default function Settings() {
     console.log(listSaved);
     if (!listSaved) {
       if (displayingBlacklist) {
-        console.log(settings["blacklistedItems"]);
-        setSelectedItems(settings["blacklistedItems"]);
+        console.log(settings["blacklistedItems" as keyof {}]);
+        setSelectedItems(settings["blacklistedItems" as keyof {}]);
       }
       else if (displayingWhitelist) {
-        setSelectedItems(settings["whitelistedItems"]);
+        setSelectedItems(settings["whitelistedItems" as keyof {}]);
       }
     }
   }, [listSaved])
@@ -90,12 +90,14 @@ export default function Settings() {
     }
     setDisplayingBlacklist(false);
     setDisplayingWhitelist(false);
+    setSelectedItems([]);
     setListSaved(true);
   }
 
   const discardList = () => {
     setDisplayingBlacklist(false);
     setDisplayingWhitelist(false);
+    setSelectedItems([]);
     setListSaved(true);
   }
 
@@ -169,8 +171,8 @@ export default function Settings() {
         
         {(displayingBlacklist || displayingWhitelist) && <div className="list-container">
           <div className="settings-row">
-            {displayingBlacklist && <div className="flex-element">Editing Blacklist</div>}
-            {displayingWhitelist && <div className="flex-element">Editing Whitelist</div>}
+            {displayingBlacklist && <div className="flex-element subprocess-header">Editing Blacklist</div>}
+            {displayingWhitelist && <div className="flex-element subprocess-header">Editing Whitelist</div>}
           </div>
 
           <div className="settings-row">
