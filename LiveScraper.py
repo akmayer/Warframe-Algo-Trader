@@ -17,8 +17,16 @@ customLogger.clearFile("wfmAPICalls.log")
 customLogger.clearFile("orderTracker.log")
 customLogger.writeTo("orderTracker.log", "Started Live Scraper")
 
-def ignoreItems(itemName):
-    return itemName in config.blacklistedItems
+
+
+def readSettings():
+    with open('settings.json') as settingsFile:
+        settings = json.load(settingsFile)
+    return settings
+
+
+def ignoreItems(itemName, settings):
+    return itemName in settings["blacklistedItems"]
 
 
 def getWeekIncrease(df, row):
@@ -27,7 +35,7 @@ def getWeekIncrease(df, row):
     change = weekDF.loc[6, "median"] - weekDF.loc[0, "median"]
     return change
 
-def getBuySellOverlap():
+def getBuySellOverlap(settings):
 
     try:
         df = pd.read_csv("allItemDataBackup.csv")
@@ -53,7 +61,7 @@ def getBuySellOverlap():
     inventory = inventory[inventory.get("number") > 0]
     inventoryNames = inventory["name"].unique()
 
-    dfFilter = averaged_df[(((averaged_df.get("volume") > config.volumeThreshold) & (averaged_df.get("range") > config.rangeThreshold)) | (averaged_df.get("name").isin(inventoryNames))) & (averaged_df.get("order_type") == "closed")]
+    dfFilter = averaged_df[(((averaged_df.get("volume") > settings["volumeThreshold"]) & (averaged_df.get("range") > settings["rangeThreshold"])) | (averaged_df.get("name").isin(inventoryNames))) & (averaged_df.get("order_type") == "closed")]
 
     dfFilter = dfFilter.sort_values(by="range", ascending=False)
     if len(dfFilter) == 0:
@@ -74,10 +82,10 @@ def getBuySellOverlap():
             }
         ).set_index("name")
     dfFilter["weekPriceShift"] = dfFilter.apply(lambda row : getWeekIncrease(df, row), axis=1)
-    if config.strictWhitelist:
-        dfFilter = dfFilter[(dfFilter.get("name").isin(config.whitelistedItems))]
+    if settings["strictWhitelist"]:
+        dfFilter = dfFilter[(dfFilter.get("name").isin(settings["whitelistedItems"]))]
     else:
-        dfFilter = dfFilter[((dfFilter.get("avg_price") < config.avgPriceCap) & (dfFilter.get("weekPriceShift") >= config.priceShiftThreshold)) | (dfFilter.get("name").isin(inventoryNames)) | (dfFilter.get("name").isin(config.whitelistedItems))]
+        dfFilter = dfFilter[((dfFilter.get("avg_price") < settings["avgPriceCap"]) & (dfFilter.get("weekPriceShift") >= settings["priceShiftThreshold"])) | (dfFilter.get("name").isin(inventoryNames)) | (dfFilter.get("name").isin(settings["whitelistedItems"]))]
     names = dfFilter["name"].unique()
 
     dfFiltered = averaged_df[averaged_df["name"].isin(names)]
@@ -119,7 +127,9 @@ def getBuySellOverlap():
     buySellOverlap = buySellOverlap.set_index("name")
     return buySellOverlap
 
-buySellOverlap = getBuySellOverlap()
+settings=readSettings()
+
+buySellOverlap = getBuySellOverlap(settings)
 
 
 def updateDBPrice(itemName, listedPrice):
@@ -145,15 +155,15 @@ def getItemRank(buySellOverlap, url_name):
     else:
         return buySellOverlap.loc[url_name, "mod_rank"]
 
-def deleteAllOrders():
+def deleteAllOrders(settings):
     currentOrders = getOrders()
     for order in currentOrders["sell_orders"]:
-        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"]):
+        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"], settings):
             #logging.debug(order)
             updateDBPrice(order["item"]["url_name"], None)
             deleteOrder(order["id"])
     for order in currentOrders["buy_orders"]:
-        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"]):
+        if config.getConfigStatus("runningLiveScraper") and not ignoreItems(order["item"]["url_name"], settings):
             deleteOrder(order["id"])
 
 def getFilteredDF(item):
@@ -260,13 +270,13 @@ def get_new_buy_data(myBuyOrdersDF, response, itemStats):
 
 
 
-def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory):
+def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, settings):
     con = sqlite3.connect('inventory.db')
 
     inventory = pd.read_sql_query("SELECT * FROM inventory", con)
     con.close()
     inventory = inventory[inventory.get("number") > 0]
-    if ignoreItems(item):
+    if ignoreItems(item, settings):
         logging.debug("Item Blacklisted.")
         return
     orderType = "buy"
@@ -279,7 +289,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     bestSeller = liveSellerDF.iloc[0]
     if numBuyers == 0 and itemStats["closedAvg"] > 25:
         postPrice = max([priceRange-40, int(priceRange / 3) - 1])
-        if postPrice > int(config.avgPriceCap):
+        if postPrice > int(settings["avgPriceCap"]):
             logging.debug("This item is higher than the price cap you set.")
             return
         if postPrice < 1:
@@ -299,7 +309,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     postPrice = bestBuyer["platinum"]
     potentialProfit = closedAvgMetric - 1
 
-    if postPrice > int(config.avgPriceCap):
+    if postPrice > int(settings["avgPriceCap"]):
         logging.debug("This item is higher than the price cap you set.")
         return
     if ((inventory[inventory["name"] == item]["number"].sum() > 1) and (closedAvgMetric < (20 + 5 * inventory[inventory["name"] == item]["number"].sum()))):
@@ -309,7 +319,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
             deleteOrder(myOrderID)
         return
     
-    if (closedAvgMetric >= 30 and priceRange >= 15) or priceRange >= 21:
+    if (closedAvgMetric >= 0 and priceRange >= 21):
         if myOrderActive:
             if (myPlatPrice != (postPrice)):
                 #need to edit such that updated listing does not exceed budget
@@ -331,7 +341,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
             if myBuyOrdersDF.shape[0] != 0:
                 buyOrdersList = list(myBuyOrdersDF[['platinum', 'potential_profit', 'url_name', 'id']].itertuples(index=False, name=None))
             buyOrdersList.append((postPrice, potentialProfit, item, None))
-            maxProfit, selectedBuyOrders, unselectedBuyOrders = knapsack(buyOrdersList, config.maxTotalPlatCap)
+            maxProfit, selectedBuyOrders, unselectedBuyOrders = knapsack(buyOrdersList, settings["maxTotalPlatCap"])
 
             selectedItemNames = [i[2] for i in selectedBuyOrders]
             logging.debug(f"The most optimal config provides a profit of {maxProfit}")
@@ -361,7 +371,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
         return
 
 
-def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory):
+def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, settings):
     con = sqlite3.connect('inventory.db')
 
     inventory = pd.read_sql_query("SELECT * FROM inventory", con)
@@ -436,13 +446,13 @@ if r.status_code == 401:
     config.setConfigStatus("runningLiveScraper", False)
     raise Exception(f"Invalid JWT Token")
 
-
-deleteAllOrders()
+settings = readSettings()
+deleteAllOrders(settings)
 interestingItems = list(buySellOverlap.index)
 
 try:
     while config.getConfigStatus("runningLiveScraper"):
-        
+        settings = readSettings()
 
         con = sqlite3.connect('inventory.db')
 
@@ -451,7 +461,7 @@ try:
         inventory = inventory[inventory.get("number") > 0]
         inventoryNames = list(inventory["name"].unique())
 
-        buySellOverlap = getBuySellOverlap()
+        buySellOverlap = getBuySellOverlap(settings)
         interestingItems = list(buySellOverlap.index)
 
         
@@ -468,7 +478,7 @@ try:
         if mySellOrdersDF.shape[0] != 0:
             mySellOrdersDF["url_name"] = mySellOrdersDF.apply(lambda row : row["item"]["url_name"], axis=1)
         
-        interestingItems += config.whitelistedItems
+        interestingItems += settings["whitelistedItems"]
         interestingItems += inventoryNames
 
         interestingItems = list(set(interestingItems))
@@ -477,6 +487,7 @@ try:
         customLogger.writeTo("orderTracker.log", f"Interesting Items (Post-Whitelist):{' '.join(interestingItems)}")
 
         for item in interestingItems:
+            settings = readSettings()
             if not config.getConfigStatus("runningLiveScraper"):
                 break
             
@@ -503,7 +514,7 @@ try:
                     modRank = r.json()["payload"]["item"]["items_in_set"][0]['mod_max_rank']
                 except KeyError:
                     modRank = None
-                compareLiveOrdersWhenSelling(item, liveOrderDF, None, currentOrders, itemID, modRank, inventory)
+                compareLiveOrdersWhenSelling(item, liveOrderDF, None, currentOrders, itemID, modRank, settings)
 
                 continue
 
@@ -513,10 +524,10 @@ try:
             itemID = getItemId(item)
             modRank = getItemRank(buySellOverlap, item)
 
-            newBuyOrderDf = compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, inventory)
+            newBuyOrderDf = compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myBuyOrdersDF, itemID, modRank, settings)
             if isinstance(newBuyOrderDf, pd.DataFrame):
                 myBuyOrdersDF = newBuyOrderDf
-            compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, inventory)
+            compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, itemID, modRank, settings)
             
             #compareLiveOrdersToData(item, liveOrderDF, "buy", itemStats, currentOrders, itemID, modRank, inventory)
             #compareLiveOrdersToData(item, liveOrderDF, "sell", itemStats, currentOrders, itemID, modRank, inventory)
