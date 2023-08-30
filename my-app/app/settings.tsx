@@ -129,20 +129,51 @@ export default function Settings() {
     setFilterStringSel("");
   }
 
+  const writeSettings = async () => {
+    try {
+      const response = await fetch(`${environment.API_BASE_URL}/settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+
+      if (response.ok) {
+        console.log('Settings successfully saved!');
+      } else {
+        console.error('Failed to save settings.');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
+
 
 
   return (
     <div className="settings-popup">  
       <div className="settings-scroll">
-        <div>
-          TEST
-        </div>
         <div className="settings-row module-header">
           Settings
         </div>
+        <div className="settings-row">
+          <div className="half-wide right">
+            <button>
+            Discard
+            </button>
+          </div>
+          <div className="half-wide left">
+            <button
+            onClick={writeSettings}>
+            Save
+            </button>
+          </div>
+        </div>
+        
 
         <div className="settings-row">
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Price Shift Threshold:
             <input
             type="number"
@@ -154,7 +185,7 @@ export default function Settings() {
             }))}
             />
           </div>
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Volume Threshold:
             <input
             type="number"
@@ -169,7 +200,7 @@ export default function Settings() {
         </div>
 
         <div className="settings-row">
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Range Threshold:
             <input 
             type="number"
@@ -181,7 +212,7 @@ export default function Settings() {
             }))}
             />
           </div>
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Avg. Price Cap:
             <input 
             type="number"
@@ -196,7 +227,7 @@ export default function Settings() {
         </div>
 
         <div className="settings-row">
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Max Total Plat Cap:
             <input 
             type="number"
@@ -208,7 +239,7 @@ export default function Settings() {
             }))}
             />
           </div>
-          <div className="flex-element">
+          <div className="flex-element half-wide">
             Strict Whitelist:
             <label className="switch">
               <input 
@@ -259,12 +290,12 @@ export default function Settings() {
           </div>
 
           <div className="settings-row">
-            <div className="flex-element">
+            <div className="flex-element half-wide">
               <button onClick={discardList}>
               Discard Changes
               </button>
             </div>
-            <div className="flex-element">
+            <div className="flex-element half-wide">
               <button onClick={saveList}>
               Save Changes (w/o writing to json)
               </button>

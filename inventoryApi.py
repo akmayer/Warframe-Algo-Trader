@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status, HTTPException, Request
 from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 import csv
@@ -16,6 +16,7 @@ import io
 import time
 from fastapi.responses import StreamingResponse
 from AccessingWFMarket import *
+from typing import Any, Dict, List, Union
 
 logging.basicConfig(format='{levelname:7} {message}', style='{', level=logging.DEBUG)
 
@@ -475,4 +476,10 @@ def get_settings():
     with open('settings.json') as settings:
         data = json.load(settings)
     return data
-    
+
+@app.put("/settings")
+async def put_settings(request: Union[List,Dict,Any]=None):
+    newSettings = json.dumps(request, indent=4)
+    with open("settings.json", "w") as settings:
+        settings.write(newSettings)
+    return {"Executed" : True}

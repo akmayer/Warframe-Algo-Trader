@@ -1,16 +1,14 @@
 {
-    "blacklistedItems" : [
-        "primed_ravage",
-        "primed_flow"
+    "blacklistedItems": [
     ],
-    "whitelistedItems" : [
+    "whitelistedItems": [
         
     ],
-    "strictWhitelist" : false,
-    "priceShiftThreshold" : -1,
-    "avgPriceCap" : 600,
+    "strictWhitelist": false,
+    "priceShiftThreshold": -1,
+    "avgPriceCap": 600,
     "maxTotalPlatCap": 100000,
-    "volumeThreshold" : 15,
-    "rangeThreshold" : 10,
-    "pingOnNotif" : true
+    "volumeThreshold": 15,
+    "rangeThreshold": 10,
+    "pingOnNotif": true
 }
