@@ -168,7 +168,7 @@ export default function Settings({
           </div>
           <div className="half-wide left">
             <button
-            onClick={writeSettings}>
+            onClick={() => {writeSettings(); onShow();}}>
             Save
             </button>
           </div>
