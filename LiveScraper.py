@@ -86,6 +86,7 @@ def getBuySellOverlap(settings):
         dfFilter = dfFilter[(dfFilter.get("name").isin(settings["whitelistedItems"]))]
     else:
         dfFilter = dfFilter[((dfFilter.get("avg_price") < settings["avgPriceCap"]) & (dfFilter.get("weekPriceShift") >= settings["priceShiftThreshold"])) | (dfFilter.get("name").isin(inventoryNames)) | (dfFilter.get("name").isin(settings["whitelistedItems"]))]
+        dfFilter = dfFilter[(~dfFilter.get("name").isin(settings["blacklistedItems"]))]
     names = dfFilter["name"].unique()
 
     dfFiltered = averaged_df[averaged_df["name"].isin(names)]
