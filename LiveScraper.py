@@ -284,6 +284,9 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
     myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
     liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
 
+    if myOrderActive:
+        if myPlatPrice > settings["avgPriceCap"]:
+            deleteOrder(myOrderID)
     #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
     if numSellers == 0:
         return
