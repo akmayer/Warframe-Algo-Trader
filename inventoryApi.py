@@ -385,6 +385,11 @@ def get_live_scraper_status():
     if liveScraperProcess == None:
         return {"Running" : False}
     else:
+        try:
+            liveScraperProcess.wait(timeout=0)
+            return {"Running" : False}
+        except subprocess.TimeoutExpired:
+            return {"Running" : True}
         return {"Running" : True}
 
 @app.post("/live_scraper/start")
