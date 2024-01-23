@@ -11,5 +11,6 @@
     "maxTotalPlatCap": 100000,
     "volumeThreshold" : 15,
     "rangeThreshold" : 10,
-    "pingOnNotif" : true
+    "pingOnNotif" : true,
+    "salesTaxThreshold": 10
 }
