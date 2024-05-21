@@ -1,6 +1,7 @@
 # Warframe Algorithmic Trading
 
-![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/4602f014-a7df-40e9-b504-390a528d95a1)
+![image](https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/6cfd1e60-792f-46cb-8875-d96c9e770615)
+
 
 <img src="https://github.com/akmayer/Warframe-Algo-Trader/assets/11152158/965c21ca-73f8-47f3-abcb-cb896e1f939c" height="512">
 
