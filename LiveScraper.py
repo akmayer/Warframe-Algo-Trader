@@ -213,10 +213,11 @@ def getMyOrderInformation(item, orderType, currentOrders):
     
     return myOrderID, visibility, myPlatPrice, myOrderActive
 
-def restructureLiveOrderDF(liveOrderDF):
+def restructureLiveOrderDF(liveOrderDF, settings):
     liveBuyerDF = liveOrderDF[liveOrderDF.get("order_type") == "buy"].sort_values(by="platinum", ascending = False)
     liveBuyerDF = liveBuyerDF[liveBuyerDF.get("username") != config.inGameName]
     liveSellerDF = liveOrderDF[liveOrderDF.get("order_type") == "sell"].sort_values(by="platinum", ascending = True)
+    liveSellerDF = liveOrderDF[liveOrderDF.get("sales_tax") > settings["salesTaxThreshold"]]
     liveSellerDF = liveSellerDF[liveSellerDF.get("username") != config.inGameName]
 
     numBuyers, numSellers = liveBuyerDF.shape[0], liveSellerDF.shape[0]
@@ -282,7 +283,7 @@ def compareLiveOrdersWhenBuying(item, liveOrderDF, itemStats, currentOrders, myB
         return
     orderType = "buy"
     myOrderID, visibility, myPlatPrice, myOrderActive = getMyOrderInformation(item, orderType, currentOrders)
-    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
+    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF, settings)
 
     if myOrderActive:
         if myPlatPrice > settings["avgPriceCap"]:
@@ -393,7 +394,7 @@ def compareLiveOrdersWhenSelling(item, liveOrderDF, itemStats, currentOrders, it
         return
     
     inventory = inventory[inventory["name"] == item]
-    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF)
+    liveBuyerDF, liveSellerDF, numBuyers, numSellers, priceRange = restructureLiveOrderDF(liveOrderDF, settings)
 
     #probably don't want to be looking at this item right now if there's literally nobody interested in selling it.
     avgCost = (inventory["purchasePrice"] * inventory["number"]).sum() / inventory["number"].sum()
