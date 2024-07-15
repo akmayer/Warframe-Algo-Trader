@@ -25,7 +25,7 @@ Additionally, this [video](https://youtu.be/5g3vUm-XlyE) contains a summary of h
 This is not necessarily a recommendation or endorsement of these projects, but are something interesting you may want to check out related to this one.
 
 
-[QuantFrame](https://github.com/Kenya-DK/quantframe-react/tree/6e22637fb8878c060bc1f0e0228b91f33df456d2)
+[QuantFrame](https://github.com/Kenya-DK/quantframe-react/)
 - A port to TypeScript + Rust + Tauri rather than Python with the goal of making a downloadable program without all the configuration needed in this one.
 
 A WIP [installation script](https://github.com/MurasakinoNll/WFAT-setup/tree/main) for this project.
