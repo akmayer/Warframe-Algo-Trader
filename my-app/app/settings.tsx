@@ -271,7 +271,19 @@ const Settings: React.FC<SettingsProps> = ({ onShow }) => {
         </div>
 
         <div className="settings-row">
-          <div className="flex-element">
+          <div className="flex-element half-wide">
+            Max Sales Tax Threshold:
+            <input 
+            type="number"
+            id="salesTaxThreshold"
+            defaultValue={settings["salesTaxThreshold" as keyof {}]}
+            onChange={(event) => setSettings(prevState => ({
+              ...prevState,
+              "salesTaxThreshold" : +event.target.value
+            }))}
+            />
+          </div>
+          <div className="flex-element half-width">
             Ping On Notif: 
             <label className="switch">
               <input 
