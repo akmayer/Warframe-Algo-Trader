@@ -1,22 +1,34 @@
 import requests
 import config
+from logging import debug, basicConfig, DEBUG
+
+basicConfig(format='{levelname:7} {message}', style='{', level=DEBUG)
 
 def sendMessage(message):
     if config.webhookLink == "":
         return
 
     if config.pingOnNotif:
-        r = requests.get(config.webhookLink)
-        creatorID = r.json()["user"]["id"]
+
+        # Discord API returns 204 No Content for POST Webhook. Moreover, it can use the username that you pass in the "body.username"
+        # No need for additionally requesting Webhook info
+        # https://discord.com/developers/docs/resources/webhook#execute-webhook
+
         msg = {
-            "content" : f"<@{creatorID}>, {message}",
+            "content": message
         }
-    else:
-        msg = {
-            "content" : f"{message}",
+
+        debug(msg)
+
+        headers = {
+            "Content-Type": "application/json"
         }
-    
-    r = requests.post(f"{config.webhookLink}", data=msg)
+
+        r = requests.post(f"{config.webhookLink}", json=msg, headers=headers)
+
+        if r.status_code == 204:
+            debug("Message successfully created")
 
 if __name__ == "__main__":
-    sendMessage("Testing webhook!")
+    debug("This is Discord Integration")
+    
