@@ -115,7 +115,7 @@ If you want to use the debug mode (Breakpoint in the python code):
 
 #### Method A) Docker
 
-Running `docker compose up` will start two containers, one for the python app, running on port `8000` and the other running the web UI, running on port `3000`.
+Running `docker compose up --build` will start two containers, one for the python app, running on port `8000` and the other running the web UI, running on port `3000`.
 
 ![image](https://user-images.githubusercontent.com/23193271/254992499-82d408e6-0a4f-4dcf-909b-f95d31e268a6.png)
 
